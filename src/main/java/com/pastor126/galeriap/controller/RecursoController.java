@@ -14,36 +14,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pastor126.galeriap.dto.UsuarioDTO;
-import com.pastor126.galeriap.service.UsuarioService;
+import com.pastor126.galeriap.dto.RecursosDTO;
+import com.pastor126.galeriap.service.RecursosService;
 
 @RestController
-@RequestMapping(value = "/usuario")
+@RequestMapping(value = "/recurso")
 @CrossOrigin
-public class UsuarioController {
+public class RecursoController {
 	
 	@Autowired
-	private UsuarioService usuarioService;
+	private RecursosService recursoService;
 	
 	@GetMapping
-	public List<UsuarioDTO> listarTodos(){
-		return usuarioService.listarTodos();
+	public List<RecursosDTO> listarTodos(){
+		return recursoService.listarTodos();
 	}
 	
 	@PostMapping
-	public void inserir(@RequestBody UsuarioDTO usuario) {
-		usuarioService.inserir(usuario);
+	public void inserir(@RequestBody RecursosDTO recurso) {
+		recursoService.inserir(recurso);
 	}
 	
 	@PutMapping
-	public UsuarioDTO alterar(@RequestBody UsuarioDTO usuario) {
-		return usuarioService.alterar(usuario);
+	public RecursosDTO alterar(@RequestBody RecursosDTO recurso) {
+		return recursoService.alterar(recurso);
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id){
-		usuarioService.excluir(id);
+	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) {
+		recursoService.excluir(id);
 		return ResponseEntity.ok().build();
 	}
-
 }
