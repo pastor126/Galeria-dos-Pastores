@@ -14,7 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Recursos")
+@Table(name = "RECURSOS")
 public class RecursoEntity {
 	
 	@Id
