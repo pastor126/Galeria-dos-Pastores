@@ -3,6 +3,7 @@ package com.pastor126.galeriap.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.pastor126.galeriap.dto.UsuarioDTO;
@@ -14,6 +15,9 @@ public class UsuarioService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 		
 	public List<UsuarioDTO> listarTodos(){
 		List<UsuarioEntity> usuarios = usuarioRepository.findAll();
@@ -22,11 +26,13 @@ public class UsuarioService {
 	
 	public void inserir(UsuarioDTO usuario) {
 		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
+		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
 		usuarioRepository.save(usuarioEntity);
 	}
 	
 	public UsuarioDTO alterar(UsuarioDTO usuario) {
 		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
+		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
 		return new UsuarioDTO(usuarioRepository.save(usuarioEntity));
 	}
 	

@@ -3,6 +3,7 @@ package com.pastor126.galeriap.dto;
 import org.springframework.beans.BeanUtils;
 
 import com.pastor126.galeriap.entity.UsuarioEntity;
+import com.pastor126.galeriap.entity.enums.SituacaoUsuario;
 
 public class UsuarioDTO {
 	
@@ -15,6 +16,9 @@ public class UsuarioDTO {
 	private String senha;
 		
 	private String email;
+	
+	private SituacaoUsuario situacao;
+	
 	
 	public UsuarioDTO(UsuarioEntity usuario) {
 		BeanUtils.copyProperties(usuario, this);
@@ -64,6 +68,13 @@ public class UsuarioDTO {
 		this.email = email;
 	}
 
-	
+	public SituacaoUsuario getSituacao() {
+		return situacao;
+	}
+
+	public void setSituacao(SituacaoUsuario situacao) {
+		this.situacao = situacao;
+	}
+
 
 }

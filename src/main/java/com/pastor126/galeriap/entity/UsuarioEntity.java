@@ -6,14 +6,19 @@ import java.util.Objects;
 import org.springframework.beans.BeanUtils;
 
 import com.pastor126.galeriap.dto.UsuarioDTO;
+import com.pastor126.galeriap.entity.enums.SituacaoUsuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "USUARIO_ENTITY")
 public class UsuarioEntity {
 	
 	@Id
@@ -31,6 +36,10 @@ public class UsuarioEntity {
 	
 	@Column(nullable = false)
 	private String email;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private SituacaoUsuario situacao;
 
 	
 	public UsuarioEntity(UsuarioDTO usuario) {
@@ -79,6 +88,16 @@ public class UsuarioEntity {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	
+
+	public SituacaoUsuario getSituacao() {
+		return situacao;
+	}
+
+	public void setSituacao(SituacaoUsuario situacao) {
+		this.situacao = situacao;
 	}
 
 	@Override
