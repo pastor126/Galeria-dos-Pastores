@@ -4,17 +4,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SituacaoUsuario {
 
-	ATIVO ("A", "Ativo"),
-	INATIVO ("I", "Inativo"),
-	PENDENTE ("P", "Pendente");
-	
+	ATIVO("A", "Ativo"), 
+	ATIVOADM("ADM", "AtivoADM"),
+	INATIVO("I", "Inativo"), 
+	PENDENTE("P", "Pendente");
+
 	private String codigo;
 	private String descricao;
-	
-	private SituacaoUsuario (String codigo, String descricao) {
+
+	private SituacaoUsuario(String codigo, String descricao) {
 		this.codigo = codigo;
 		this.descricao = descricao;
-		
+
 	}
 
 	@JsonValue
@@ -33,10 +34,12 @@ public enum SituacaoUsuario {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	
+
 	public static SituacaoUsuario valorEnum(String codigo) {
 		if(codigo.equals("A")) {
 			return ATIVO;
+		}else if(codigo.equals("ADM")) {
+			return ATIVOADM;
 		}else if(codigo.equals("I")) {
 			return INATIVO;
 		}else if(codigo.equals("P")) {

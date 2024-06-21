@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.entity.UsuarioEntity;
+import com.pastor126.galeriap.entity.enums.SituacaoUsuario;
 import com.pastor126.galeriap.repository.UsuarioRepository;
 
 @Service
@@ -18,6 +19,9 @@ public class UsuarioService {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+			
+	@Autowired
+	private EmailService emailService;
 		
 	public List<UsuarioDTO> listarTodos(){
 		List<UsuarioEntity> usuarios = usuarioRepository.findAll();
@@ -28,6 +32,17 @@ public class UsuarioService {
 		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
 		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
 		usuarioRepository.save(usuarioEntity);
+	}
+	
+	public void inserirNovoUsuario(UsuarioDTO usuario) {
+		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
+		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
+		usuarioEntity.setSituacao(SituacaoUsuario.PENDENTE);
+		usuarioEntity.setId(null);
+		usuarioRepository.save(usuarioEntity);
+		emailService.enviarEmailTexto(usuario.getEmail(),
+				"Novo usuário da Galeria dos Pastores", 
+				"Voçê está recebendo um email de cadastro.");
 	}
 	
 	public UsuarioDTO alterar(UsuarioDTO usuario) {

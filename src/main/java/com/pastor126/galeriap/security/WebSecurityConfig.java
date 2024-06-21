@@ -23,37 +23,35 @@ public class WebSecurityConfig {
 
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
-
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
+	
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
-
+	
 	@Bean
 	public AuthFilterToken authFilterToken() {
 		return new AuthFilterToken();
 	}
-
+	
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+		
 		http.cors(Customizer.withDefaults());
-		http.csrf(csrf -> csrf.disable())
-				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
-				
-						.requestMatchers("/usuario/**").permitAll()
-				.anyRequest().authenticated());
-
+		http.csrf(csrf -> csrf.disable())	
+			.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
+											.requestMatchers("/usuario/**").permitAll()
+											.anyRequest().authenticated());
+		
 		http.addFilterBefore(authFilterToken(), UsernamePasswordAuthenticationFilter.class);
-
+		
 		return http.build();
-	}
+	}	
 }

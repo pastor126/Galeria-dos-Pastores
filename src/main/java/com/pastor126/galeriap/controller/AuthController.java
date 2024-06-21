@@ -9,19 +9,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pastor126.galeriap.dto.AuthenticationDTO;
+import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.service.AuthService;
+import com.pastor126.galeriap.service.UsuarioService;
 
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin
 public class AuthController {
-	
+
 	@Autowired
 	private AuthService authService;
 	
+	@Autowired
+	private UsuarioService usuarioService;
+	
 	@PostMapping(value = "/login")
-	public ResponseEntity<?> login(@RequestBody AuthenticationDTO authDTO){
-		return ResponseEntity.ok(authService.login(authDTO));
+	public ResponseEntity<?> login(@RequestBody AuthenticationDTO authDto){
+		return ResponseEntity.ok(authService.login(authDto));
 	}
-
+	
+	@PostMapping(value = "/novoUsuario")
+	public void inserirNovoUsuario(@RequestBody UsuarioDTO novoUsuario){
+		usuarioService.inserirNovoUsuario(novoUsuario);
+	}
 }
