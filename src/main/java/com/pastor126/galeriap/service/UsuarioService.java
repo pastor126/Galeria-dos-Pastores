@@ -74,4 +74,21 @@ public class UsuarioService {
 	public UsuarioDTO buscarPorId(Long id) {
 		return new UsuarioDTO(usuarioRepository.findById(id).get());
 	}
+	
+	public String verificaCadastro(String uuid) {
+		VerificadorPendenciaEntity verificaPendencia = verificadorRepository.findByUuid(UUID.fromString(uuid)).get();
+		if(verificaPendencia != null) {
+			if(verificaPendencia.getDataExpira().compareTo(Instant.now()) >= 0) {
+				UsuarioEntity uverificado = verificaPendencia.getUsuario();
+				uverificado.setSituacao(SituacaoUsuario.ATIVO);
+			usuarioRepository.save(uverificado);	
+			return "Usuário verificado";
+			}
+		}else {
+			verificadorRepository.delete(verificaPendencia);
+			return "Tempo de verificação EXPIRADO!";
+		}
+		
+		return null;
+	}
 }
