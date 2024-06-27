@@ -56,7 +56,7 @@ public class UsuarioService {
 		
 		emailService.enviarEmailTexto(usuario.getEmail(),
 				"Novo usuário da Galeria dos Pastores", 
-				"Voçê está recebendo um email de cadastro, para validar insira o código: "
+				"Voçê está recebendo um email de cadastro, para validar clique no link: " + "http://localhost:8089/auth/verificaCadastro/"
 				+ verificador.getUuid());
 	}
 	
