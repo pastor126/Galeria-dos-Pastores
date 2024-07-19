@@ -66,12 +66,6 @@ public class PastoresService {
 	
 	
 	
-	
-	
-	
-	
-	
-	
 	public PastoresDTO buscarPorId(Long id){
 		return new PastoresDTO(pastoresRepository.findById(id).get());
 	}
