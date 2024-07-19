@@ -51,19 +51,16 @@ public class PastoresService {
 			 List<PastoresEntity> pastores = pastoresRepository.findAll();
 			return pastores.stream().map(PastoresDTO :: new).toList();
 	}else {
-		if("usuariocomum".equals(perfil)){
+	
 			System.out.println("parou aqui");
 			List<PastoresEntity> pastores = pastoresRepository.findAll();
 			for(PastoresEntity pastor : pastores) {
 				pastor.setNome(null);
 			}
 			return pastores.stream().map(PastoresDTO :: new).toList();
-			}
-	
-	}	
+			}	
 		
-		List<PastoresEntity> pastores = pastoresRepository.findAll();
-		return pastores.stream().map(PastoresDTO :: new).toList();
+		
 	}
 	
 	

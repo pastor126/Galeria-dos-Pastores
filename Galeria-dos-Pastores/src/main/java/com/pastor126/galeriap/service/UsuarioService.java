@@ -89,7 +89,8 @@ public class UsuarioService {
 				UsuarioEntity uverificado = verificaPendencia.getUsuario();
 				uverificado.setSituacao(SituacaoUsuario.ATIVO);
 			usuarioRepository.save(uverificado);	
-			return "https://pastor-frontend-production.up.railway.app/login";
+			return " <a className=\" text-m font-medium text-white hover:bg-red-400 focus-visible:outline-offset-2 focus-visible:outline-red-900   border-2 rounded-md  border-black ml-10 bg-red-500 mt-4 mb-1 pl-4 pr-4 flex items-center w-20\" href='https://pastor-frontend-production.up.railway'>Vá para o Login</a>";
+//					https://pastor-frontend-production.up.railway.app/login";
 			}
 		}else {
 			verificadorRepository.delete(verificaPendencia);
