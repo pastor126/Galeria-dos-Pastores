@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
-import com.pastor126.galeriap.dto.RecursosDTO;
 import com.pastor126.galeriap.entity.PerfilUsuarioEntity;
-import com.pastor126.galeriap.entity.RecursoEntity;
 import com.pastor126.galeriap.repository.PerfilUsuarioRepository;
 
 @Service

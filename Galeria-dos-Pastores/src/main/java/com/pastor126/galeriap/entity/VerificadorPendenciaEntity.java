@@ -1,6 +1,7 @@
 package com.pastor126.galeriap.entity;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -11,17 +12,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 @Entity
 @Table(name = "VERIFICADOR_PENDENCIA")
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
 public class VerificadorPendenciaEntity {
 	
 	@Id
@@ -37,5 +31,61 @@ public class VerificadorPendenciaEntity {
 	@ManyToOne
 	@JoinColumn(name = "ID_USUARIO", referencedColumnName = "ID", unique = true)
 	private UsuarioEntity usuario;
+
+	public VerificadorPendenciaEntity() {
+		super();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
+
+	public Instant getDataExpira() {
+		return dataExpira;
+	}
+
+	public void setDataExpira(Instant dataExpira) {
+		this.dataExpira = dataExpira;
+	}
+
+	public UsuarioEntity getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(UsuarioEntity usuario) {
+		this.usuario = usuario;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dataExpira, id, usuario, uuid);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VerificadorPendenciaEntity other = (VerificadorPendenciaEntity) obj;
+		return Objects.equals(dataExpira, other.dataExpira) && Objects.equals(id, other.id)
+				&& Objects.equals(usuario, other.usuario) && Objects.equals(uuid, other.uuid);
+	}
+	
+	
 
 }

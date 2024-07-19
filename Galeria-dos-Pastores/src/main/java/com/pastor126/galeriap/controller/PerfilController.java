@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pastor126.galeriap.dto.PerfilDTO;
-import com.pastor126.galeriap.dto.RecursosDTO;
 import com.pastor126.galeriap.service.PerfilService;
 
 @RestController

@@ -4,13 +4,6 @@ import org.springframework.beans.BeanUtils;
 
 import com.pastor126.galeriap.entity.PerfilUsuarioEntity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor
 public class PerfilUsuarioDTO {
 	
 	private Long id;
@@ -26,5 +19,34 @@ public class PerfilUsuarioDTO {
 			this.perfil = new PerfilDTO(perfilUsuario.getPerfil());
 		}
 	}
+
+	public PerfilUsuarioDTO() {
+		super();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public UsuarioDTO getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(UsuarioDTO usuario) {
+		this.usuario = usuario;
+	}
+
+	public PerfilDTO getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(PerfilDTO perfil) {
+		this.perfil = perfil;
+	}
+	
 
 }
