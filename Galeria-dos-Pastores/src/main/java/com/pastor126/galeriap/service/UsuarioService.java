@@ -10,9 +10,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.pastor126.galeriap.dto.UsuarioDTO;
+import com.pastor126.galeriap.entity.PerfilEntity;
+import com.pastor126.galeriap.entity.PerfilUsuarioEntity;
 import com.pastor126.galeriap.entity.UsuarioEntity;
 import com.pastor126.galeriap.entity.VerificadorPendenciaEntity;
 import com.pastor126.galeriap.entity.enums.SituacaoUsuario;
+import com.pastor126.galeriap.repository.PerfilRepository;
+import com.pastor126.galeriap.repository.PerfilUsuarioRepository;
 import com.pastor126.galeriap.repository.UsuarioRepository;
 import com.pastor126.galeriap.repository.VerificadorPendenciaRepository;
 
@@ -21,6 +25,12 @@ public class UsuarioService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private PerfilUsuarioRepository perfilUsuarioRepository;
+	
+	@Autowired
+	private PerfilRepository perfilRepository;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -50,11 +60,21 @@ public class UsuarioService {
 		usuarioEntity.setId(null);
 		usuarioRepository.save(usuarioEntity);
 		
+		PerfilUsuarioEntity perfilUsu = new PerfilUsuarioEntity();
+		Long idp = (long) 2;
+		Optional<PerfilEntity> perfilOp = perfilRepository.findById(idp);
+		PerfilEntity perfil = perfilOp.get();
+		
+		perfilUsu.setPerfil(perfil);
+		perfilUsu.setUsuario(usuarioEntity);
+		perfilUsuarioRepository.save(perfilUsu);
+		
 		VerificadorPendenciaEntity verificador = new VerificadorPendenciaEntity();
 		verificador.setUsuario(usuarioEntity);
 		verificador.setUuid(UUID.randomUUID());
 		verificador.setDataExpira(Instant.now().plusMillis(900000));
 		verificadorRepository.save(verificador);
+		
 		
 		emailService.enviarEmailTexto(usuario.getEmail(),
 				"Novo usuário da Galeria dos Pastores", 
@@ -89,12 +109,12 @@ public class UsuarioService {
 				UsuarioEntity uverificado = verificaPendencia.getUsuario();
 				uverificado.setSituacao(SituacaoUsuario.ATIVO);
 			usuarioRepository.save(uverificado);	
-			return " <a className=\" text-m font-medium text-white hover:bg-red-400 focus-visible:outline-offset-2 focus-visible:outline-red-900   border-2 rounded-md  border-black ml-10 bg-red-500 mt-4 mb-1 pl-4 pr-4 flex items-center w-20\" href='https://pastor-frontend-production.up.railway'>Vá para o Login</a>";
+			return "<a className=\" text-5xl font-medium text-white hover:bg-red-400 focus-visible:outline-offset-2 focus-visible:outline-red-900   border-2 rounded-md  border-black ml-10 bg-red-500 mt-20 ml-20 pl-4 pr-4 flex items-center w-20\" href='https://pastor-frontend-production.up.railway.app'>Vá para o Login</a>";
 //					https://pastor-frontend-production.up.railway.app/login";
 			}
 		}else {
 			verificadorRepository.delete(verificaPendencia);
-			return "Tempo de verificação EXPIRADO!";
+			return "<a className=\" text-2xl font-medium text-white hover:bg-red-400 focus-visible:outline-offset-2 focus-visible:outline-red-900   border-2 rounded-md  border-black ml-10 bg-red-500 mt-20 ml-20 pl-4 pr-4 flex items-center w-20\" href='https://pastor-frontend-production.up.railway.app'>Tempo de verificação expirado! Faça novo cadastro e verifque seu email em até 15 minutos para validar.</a>";
 		}
 		
 		return null;
