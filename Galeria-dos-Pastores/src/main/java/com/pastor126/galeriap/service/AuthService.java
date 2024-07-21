@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.pastor126.galeriap.dto.AcessDTO;
 import com.pastor126.galeriap.dto.AuthenticationDTO;
 import com.pastor126.galeriap.entity.UsuarioEntity;
+import com.pastor126.galeriap.repository.UsuarioRepository;
 import com.pastor126.galeriap.security.jwt.JwtUtils;
 
 import org.slf4j.Logger;
@@ -27,12 +28,12 @@ public class AuthService {
     private JwtUtils jwtUtils;
     
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioRepository usuarioRepository;
 
     public AcessDTO login(AuthenticationDTO authDTO) {
         try {
         	// Valida a situação do usuário
-            UsuarioEntity usuario = usuarioService.buscarPorLogin(authDTO.getUsername());
+            UsuarioEntity usuario = usuarioRepository.findByLogin(authDTO.getUsername()).get();
             if (!"A".equals(usuario.getSituacao().getCodigo())) {
                 throw new BadCredentialsException("Usuário com situação inválida");
             }

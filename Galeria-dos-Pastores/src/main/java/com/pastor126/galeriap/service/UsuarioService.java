@@ -1,6 +1,8 @@
 package com.pastor126.galeriap.service;
 
+import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
 import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.entity.PerfilEntity;
 import com.pastor126.galeriap.entity.PerfilUsuarioEntity;
@@ -33,6 +37,12 @@ public class UsuarioService {
 	private PerfilRepository perfilRepository;
 	
 	@Autowired
+	private PerfilUsuarioService perfilUsuarioService;
+	
+	@Autowired
+	public AuthDtoCacheService authDtoCacheService;
+	
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 			
 	@Autowired
@@ -40,17 +50,49 @@ public class UsuarioService {
 	
 	@Autowired
 	private VerificadorPendenciaRepository verificadorRepository;
+	
+	private String autorizacao() throws IOException {
+		String perfil=null;
+		String login = authDtoCacheService.get("authDto");
+		 if (login == null) {
+	            throw new IOException("authDto não encontrado");
+	        }
+		System.out.println("Login é: "+login);
+		Optional<UsuarioEntity> usuario = usuarioRepository.findByLogin(login);
+		Long idU = usuario.get().getId();
+		System.out.println("idU é: "+ idU);
+		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
+		for(PerfilUsuarioDTO usuarioP : lista) {
+			if(usuarioP.getUsuario().getId().equals(idU)) {
+				perfil = usuarioP.getPerfil().getDescricao();
+				System.out.println("perfil é: "+ perfil);
+			break;
+			}			
+		}
+		if("administrador".equals(perfil)) {
+			System.out.print("perfil autorizado - adm");
+			return "adm";
+		}
+		System.out.print("perfil não autorizado");
+			return "Sem acesso";
+			}
 		
-	public List<UsuarioDTO> listarTodos(){
+	public List<UsuarioDTO> listarTodos() throws IOException{
+		if(autorizacao().equals("adm")) {
 		List<UsuarioEntity> usuarios = usuarioRepository.findAll();
 		return usuarios.stream().map(UsuarioDTO::new).toList();
 	}
-
+		List<UsuarioEntity> usuarios = new ArrayList<>();
+		return usuarios.stream().map(UsuarioDTO::new).toList();
+	}
 	
-	public void inserir(UsuarioDTO usuario) {
+		
+	public void inserir(UsuarioDTO usuario) throws IOException {
+		if(autorizacao().equals("adm")) {
 		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
 		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
 		usuarioRepository.save(usuarioEntity);
+	}
 	}
 	
 	public void inserirNovoUsuario(UsuarioDTO usuario) {
@@ -82,25 +124,39 @@ public class UsuarioService {
 				+ verificador.getUuid());
 	}
 	
-	public UsuarioDTO alterar(UsuarioDTO usuario) {
+	public UsuarioDTO alterar(UsuarioDTO usuario) throws IOException {
+		if(autorizacao().equals("adm")) {
 		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
 		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
 		return new UsuarioDTO(usuarioRepository.save(usuarioEntity));
 	}
+	UsuarioDTO u = new UsuarioDTO();
+	return u;
+}
 	
-	public void excluir(Long id) {
+	public void excluir(Long id) throws IOException {
+		if(autorizacao().equals("adm")) {
 		UsuarioEntity usuario = usuarioRepository.findById(id).get();
 		usuarioRepository.delete(usuario);
+		}
 	}
 	
-	public UsuarioDTO buscarPorId(Long id) {
+	public UsuarioDTO buscarPorId(Long id) throws IOException {
+		if(autorizacao().equals("adm")) {
 		return new UsuarioDTO(usuarioRepository.findById(id).get());
 	}
+		UsuarioDTO u = new UsuarioDTO();
+		return u;
+	}
 	
-	 public UsuarioEntity buscarPorLogin(String login) {
+	 public UsuarioEntity buscarPorLogin(String login) throws IOException, RuntimeException {
+			if(autorizacao().equals("adm")) {
 	        Optional<UsuarioEntity> usuarioOpt = usuarioRepository.findByLogin(login);
 	        return usuarioOpt.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 	    }
+	 UsuarioEntity ue = new UsuarioEntity();
+		return ue;
+	}
 	
 	public String verificaCadastro(String uuid) {
 		VerificadorPendenciaEntity verificaPendencia = verificadorRepository.findByUuid(UUID.fromString(uuid)).get();

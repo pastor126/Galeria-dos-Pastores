@@ -19,9 +19,9 @@ import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.service.UsuarioService;
 
 @RestController
-@RequestMapping(value = "/usuario")
+@RequestMapping(value = "/adm")
 @CrossOrigin
-public class UsuarioController {
+public class AdmController {
 	
 	@Autowired
 	private UsuarioService usuarioService;
@@ -32,8 +32,8 @@ public class UsuarioController {
 	}
 	
 	@PostMapping
-	public void inserir(@RequestBody UsuarioDTO usuario) {
-		usuarioService.inserirNovoUsuario(usuario);
+	public void inserir(@RequestBody UsuarioDTO usuario) throws IOException {
+		usuarioService.inserir(usuario);
 	}
 	
 	@PutMapping

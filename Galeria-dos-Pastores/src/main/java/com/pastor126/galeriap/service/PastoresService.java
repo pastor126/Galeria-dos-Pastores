@@ -16,16 +16,16 @@ import com.pastor126.galeriap.repository.PastoresRepository;
 public class PastoresService {
 
 	@Autowired
-	PastoresRepository pastoresRepository;
+	private PastoresRepository pastoresRepository;
 	
 	@Autowired
-	UsuarioService usuarioService;
+	private UsuarioService usuarioService;
 	
 	@Autowired
-	PerfilUsuarioService perfilUsuarioService;
+	private PerfilUsuarioService perfilUsuarioService;
 	
-	   @Autowired
-	    private AuthDtoCacheService authDtoCacheService;
+	@Autowired
+	public AuthDtoCacheService authDtoCacheService;
 	
 	
 	
