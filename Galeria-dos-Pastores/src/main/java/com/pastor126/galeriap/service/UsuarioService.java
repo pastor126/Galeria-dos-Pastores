@@ -91,7 +91,17 @@ public class UsuarioService {
 		if(autorizacao().equals("adm")) {
 		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
 		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
+		usuarioEntity.setId(null);
 		usuarioRepository.save(usuarioEntity);
+		PerfilUsuarioEntity perfilUsu = new PerfilUsuarioEntity();
+		Long idp = (long) 2;
+		Optional<PerfilEntity> perfilOp = perfilRepository.findById(idp);
+		PerfilEntity perfil = perfilOp.get();
+		
+		perfilUsu.setPerfil(perfil);
+		perfilUsu.setUsuario(usuarioEntity);
+		perfilUsuarioRepository.save(perfilUsu);
+		
 	}
 	}
 	
@@ -150,7 +160,7 @@ public class UsuarioService {
 		UsuarioEntity usuario = usuarioRepository.findById(id).get();
 		Long idPerfil = perfilUsuarioRepository.findByUsuario(usuario).get().getId();
 		perfilUsuarioService.excluir(idPerfil);
-		usuarioRepository.delete(usuario);
+		usuarioRepository.deleteById(id);
 		}
 	}
 	
