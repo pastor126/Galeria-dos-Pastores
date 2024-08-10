@@ -86,25 +86,7 @@ public class UsuarioService {
 		return usuarios.stream().map(UsuarioDTO::new).toList();
 	}
 	
-		
-	public void inserir(UsuarioDTO usuario) throws IOException {
-		if(autorizacao().equals("adm")) {
-		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
-		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
-		usuarioEntity.setId(null);
-		usuarioRepository.save(usuarioEntity);
-		PerfilUsuarioEntity perfilUsu = new PerfilUsuarioEntity();
-		Long idp = (long) 2;
-		Optional<PerfilEntity> perfilOp = perfilRepository.findById(idp);
-		PerfilEntity perfil = perfilOp.get();
-		
-		perfilUsu.setPerfil(perfil);
-		perfilUsu.setUsuario(usuarioEntity);
-		perfilUsuarioRepository.save(perfilUsu);
-		
-	}
-	}
-	
+
 	public void inserirNovoUsuario(UsuarioDTO usuario) {
 		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
 		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
@@ -190,7 +172,6 @@ public class UsuarioService {
 			usuarioRepository.save(uverificado);
 			verificadorRepository.delete(verificaPendencia);
 			return "<a className=\" text-5xl font-medium text-white hover:bg-red-400 focus-visible:outline-offset-2 focus-visible:outline-red-900   border-2 rounded-md  border-black ml-10 bg-red-500 mt-20 ml-20 pl-4 pr-4 flex items-center w-20\" href='https://pastor-frontend-production.up.railway.app'>Vá para o Login</a>";
-//					https://pastor-frontend-production.up.railway.app/login";
 			}
 		}else {
 			verificadorRepository.delete(verificaPendencia);
