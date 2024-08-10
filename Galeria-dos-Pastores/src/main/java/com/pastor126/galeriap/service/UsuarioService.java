@@ -131,7 +131,6 @@ public class UsuarioService {
 	        usuarioedit.setNome(usuario.getNome());
 	        usuarioedit.setLogin(usuario.getLogin());
 	        usuarioedit.setEmail(usuario.getEmail());
-	        usuarioedit.setSenha(passwordEncoder.encode(usuario.getSenha()));
 	        usuarioedit.setSituacao(usuario.getSituacao());
 
 	        // Salva o usuário atualizado no banco de dados
