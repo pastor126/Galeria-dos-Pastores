@@ -32,6 +32,11 @@ public class PastorController {
 	return pastoresService.listarTodos();	
 	}
 	
+	@GetMapping("/{id}")
+	public PastoresDTO buscarId(@PathVariable("id") Long id) throws IOException{
+	return pastoresService.buscarPorId(id);
+	}
+	
 	@PostMapping
 	public void inserir(@RequestBody PastoresDTO pastores) {
 		pastoresService.inserir(pastores);

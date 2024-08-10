@@ -66,9 +66,16 @@ public class PastoresService {
 	
 	
 	
-	public PastoresDTO buscarPorId(Long id){
-		return new PastoresDTO(pastoresRepository.findById(id).get());
+	public PastoresDTO buscarPorId(Long id) throws IOException{
+		PastoresDTO pastores = new PastoresDTO();
+		if(autentica()) {
+			return new PastoresDTO(pastoresRepository.findById(id).get());
+		}else {
+			return pastores;
+		}	
+		
 	}
+	
 	
 	public void inserir(PastoresDTO pastores) {
 		PastoresEntity pastoresEntity = new PastoresEntity(pastores);
@@ -83,6 +90,32 @@ public class PastoresService {
 	public void excluir(Long id) {
 		PastoresEntity pastores = pastoresRepository.findById(id).get();
 		pastoresRepository.delete(pastores);
+	}
+	
+	public boolean autentica() throws IOException {
+		String perfil=null;
+		String login = authDtoCacheService.get("authDto");
+		 if (login == null) {
+	            throw new IOException("authDto não encontrado");
+	        }
+		UsuarioEntity usuario = usuarioService.buscarPorLogin(login);
+		Long idU = usuario.getId();
+		System.out.println("idU é: "+ idU);
+		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
+		for(PerfilUsuarioDTO usuarioP : lista) {
+			if(usuarioP.getUsuario().getId().equals(idU)) {
+				perfil = usuarioP.getPerfil().getDescricao();
+			break;
+			}			
+		}
+		if("administrador".equals(perfil)) {
+			 boolean autentica = true;
+			return autentica;
+	}else {
+			boolean autentica = false;
+			return autentica;
+			}	
+	
 	}
 	
 }

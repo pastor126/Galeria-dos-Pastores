@@ -26,25 +26,29 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioService usuarioService;
 	
-	@GetMapping
-	public List<UsuarioDTO> listarTodos() throws IOException{
-		return usuarioService.listarTodos();
-	}
+
 	
 	@PostMapping
 	public void inserir(@RequestBody UsuarioDTO usuario) {
 		usuarioService.inserirNovoUsuario(usuario);
 	}
 	
-	@PutMapping
-	public UsuarioDTO alterar(@RequestBody UsuarioDTO usuario) throws IOException {
-		return usuarioService.alterar(usuario);
+	@GetMapping
+	public List<UsuarioDTO> listarTodos() throws IOException{
+		return usuarioService.listarTodos();
 	}
+	
+	@PutMapping("/{id}")
+    public ResponseEntity<UsuarioDTO> alterar(@PathVariable Long id, @RequestBody UsuarioDTO usuario) throws IOException {
+        UsuarioDTO atualizado = usuarioService.alterar(id, usuario);
+        return ResponseEntity.ok(atualizado);
+    }
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws IOException{
 		usuarioService.excluir(id);
 		return ResponseEntity.ok().build();
 	}
+
 
 }

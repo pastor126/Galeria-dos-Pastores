@@ -8,4 +8,5 @@ import com.pastor126.galeriap.entity.PastoresEntity;
 
 public interface PastoresRepository extends JpaRepository<PastoresEntity, Long>{
 	Optional<PastoresEntity> findByNumero(String numero);
+	
 }

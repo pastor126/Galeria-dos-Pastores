@@ -124,19 +124,33 @@ public class UsuarioService {
 				+ verificador.getUuid());
 	}
 	
-	public UsuarioDTO alterar(UsuarioDTO usuario) throws IOException {
+	public UsuarioDTO alterar(Long id, UsuarioDTO usuario) throws IOException {
+		 Optional<UsuarioEntity> optionalUsuario = usuarioRepository.findById(id);
 		if(autorizacao().equals("adm")) {
-		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
-		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
-		return new UsuarioDTO(usuarioRepository.save(usuarioEntity));
+			UsuarioEntity usuarioedit = optionalUsuario.get();
+	        usuarioedit.setNome(usuario.getNome());
+	        usuarioedit.setLogin(usuario.getLogin());
+	        usuarioedit.setEmail(usuario.getEmail());
+	        usuarioedit.setSenha(passwordEncoder.encode(usuario.getSenha()));
+	        usuarioedit.setSituacao(usuario.getSituacao());
+
+	        // Salva o usuário atualizado no banco de dados
+	        UsuarioEntity usuarioAtualizado = usuarioRepository.save(usuarioedit);
+
+	        // Converte a entidade para DTO e retorna
+	        return new UsuarioDTO(usuarioAtualizado);
 	}
 	UsuarioDTO u = new UsuarioDTO();
 	return u;
 }
 	
+	
+	
 	public void excluir(Long id) throws IOException {
 		if(autorizacao().equals("adm")) {
 		UsuarioEntity usuario = usuarioRepository.findById(id).get();
+		Long idPerfil = perfilUsuarioRepository.findByUsuario(usuario).get().getId();
+		perfilUsuarioService.excluir(idPerfil);
 		usuarioRepository.delete(usuario);
 		}
 	}
@@ -164,7 +178,8 @@ public class UsuarioService {
 			if(verificaPendencia.getDataExpira().compareTo(Instant.now()) >= 0) {
 				UsuarioEntity uverificado = verificaPendencia.getUsuario();
 				uverificado.setSituacao(SituacaoUsuario.ATIVO);
-			usuarioRepository.save(uverificado);	
+			usuarioRepository.save(uverificado);
+			verificadorRepository.delete(verificaPendencia);
 			return "<a className=\" text-5xl font-medium text-white hover:bg-red-400 focus-visible:outline-offset-2 focus-visible:outline-red-900   border-2 rounded-md  border-black ml-10 bg-red-500 mt-20 ml-20 pl-4 pr-4 flex items-center w-20\" href='https://pastor-frontend-production.up.railway.app'>Vá para o Login</a>";
 //					https://pastor-frontend-production.up.railway.app/login";
 			}

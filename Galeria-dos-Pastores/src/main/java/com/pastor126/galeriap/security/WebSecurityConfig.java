@@ -13,6 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.pastor126.galeriap.security.jwt.AuthEntryPointJwt;
 import com.pastor126.galeriap.security.jwt.AuthFilterToken;
@@ -43,7 +46,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())    
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //Política de gerenciamento de sessão, sem manutenção de estado, apropriado para APIs RESTful.
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/usuario/**").permitAll()
@@ -53,4 +56,16 @@ public class WebSecurityConfig {
         
         return http.build();
     }    
+    
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("https://pastor-frontend-production.up.railway.app");
+        config.addAllowedHeader("*"); //Permite todos os cabeçalhos.
+        config.addAllowedMethod("*"); //Permite todos os métodos HTTP.
+        source.registerCorsConfiguration("/**", config); //Registra a configuração de CORS para todas as rotas (/**).
+        return new CorsFilter(source);
+    }
 }
