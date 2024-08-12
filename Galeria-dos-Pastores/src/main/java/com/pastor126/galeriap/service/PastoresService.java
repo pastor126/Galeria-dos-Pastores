@@ -2,13 +2,17 @@ package com.pastor126.galeriap.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.pastor126.galeriap.dto.PastoresDTO;
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
+import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.entity.PastoresEntity;
 import com.pastor126.galeriap.entity.UsuarioEntity;
 import com.pastor126.galeriap.repository.PastoresRepository;
+import com.pastor126.galeriap.repository.UsuarioRepository;
 
 
 
@@ -22,10 +26,40 @@ public class PastoresService {
 	private UsuarioService usuarioService;
 	
 	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
 	private PerfilUsuarioService perfilUsuarioService;
 	
 	@Autowired
 	public AuthDtoCacheService authDtoCacheService;
+	
+	private String autorizacao() throws IOException {
+		String perfil=null;
+		String login = authDtoCacheService.get("authDto");
+		 if (login == null) {
+	            throw new IOException("authDto não encontrado");
+	        }
+		System.out.println("Login é: "+login);
+		Optional<UsuarioEntity> usuario = usuarioRepository.findByLogin(login);
+		Long idU = usuario.get().getId();
+		System.out.println("idU é: "+ idU);
+		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
+		for(PerfilUsuarioDTO usuarioP : lista) {
+			if(usuarioP.getUsuario().getId().equals(idU)) {
+				perfil = usuarioP.getPerfil().getDescricao();
+				System.out.println("perfil é: "+ perfil);
+			break;
+			}			
+		}
+		if("administrador".equals(perfil)) {
+			System.out.print("perfil autorizado - adm");
+			return "adm";
+		}
+		System.out.print("perfil não autorizado");
+			return "Sem acesso";
+			}
+		
 	
 	
 	
@@ -82,15 +116,29 @@ public class PastoresService {
 		pastoresRepository.save(pastoresEntity);
 	}
 	
-	public PastoresDTO alterar(PastoresDTO pastores) {
-		PastoresEntity pastoresEntity = new PastoresEntity(pastores);
-		return new PastoresDTO(pastoresRepository.save(pastoresEntity));
+	public PastoresDTO alterar(Long id, PastoresDTO pastores) throws IOException {
+		Optional<PastoresEntity> pastoresOpt = pastoresRepository.findById(id);
+		if(autorizacao().equals("adm")) {
+			PastoresEntity pastoredit = pastoresOpt.get();
+	        pastoredit.setNumero(pastores.getNumero());
+	        pastoredit.setNome(pastores.getNome());
+	        pastoredit.setIniciais(pastores.getIniciais());
+	        PastoresEntity pastoratual = pastoresRepository.save(pastoredit);
+	      
+	        // Converte a entidade para DTO e retorna
+	        return new PastoresDTO(pastoratual);
 	}
+	PastoresDTO u = new PastoresDTO();
+	return u;
+}
+		
 	
-	public void excluir(Long id) {
+	public void excluir(Long id) throws IOException {
+		if(autorizacao().equals("adm")) {
 		PastoresEntity pastores = pastoresRepository.findById(id).get();
 		pastoresRepository.delete(pastores);
-	}
+		}
+		}
 	
 	public boolean autentica() throws IOException {
 		String perfil=null;

@@ -42,13 +42,15 @@ public class PastorController {
 		pastoresService.inserir(pastores);
 	}
 	
-	@PutMapping
-	public PastoresDTO alterar(@RequestBody PastoresDTO pastores) {
-		return pastoresService.alterar(pastores);
+	@PutMapping("/{id}")
+	public ResponseEntity<PastoresDTO> alterar(@PathVariable Long id ,@RequestBody PastoresDTO pastores) throws IOException {
+        PastoresDTO atualizado = pastoresService.alterar(id, pastores);
+        return ResponseEntity.ok(atualizado);
+		
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id){
+	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws IOException{
 		pastoresService.excluir(id);
 		return ResponseEntity.ok().build();
 	}
