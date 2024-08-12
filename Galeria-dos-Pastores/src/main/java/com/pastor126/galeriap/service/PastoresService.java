@@ -1,8 +1,10 @@
 package com.pastor126.galeriap.service;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,18 +85,21 @@ public class PastoresService {
 		}
 		if("administrador".equals(perfil) || "parasar".equals(perfil)) {
 			 List<PastoresEntity> pastores = pastoresRepository.findAll();
-			return pastores.stream().map(PastoresDTO :: new).toList();
+			 return pastores.stream()
+			            .map(PastoresDTO::new)
+			            .sorted(Comparator.comparing(p -> Integer.parseInt(p.getNumero())))
+			            .collect(Collectors.toList());
 	}else {
-	
 			System.out.println("parou aqui");
 			List<PastoresEntity> pastores = pastoresRepository.findAll();
 			for(PastoresEntity pastor : pastores) {
 				pastor.setNome(null);
 			}
-			return pastores.stream().map(PastoresDTO :: new).toList();
+			return pastores.stream()
+		            .map(PastoresDTO::new)
+		            .sorted(Comparator.comparing(p -> Integer.parseInt(p.getNumero())))
+		            .collect(Collectors.toList());
 			}	
-		
-		
 	}
 	
 	

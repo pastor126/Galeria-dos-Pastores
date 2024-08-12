@@ -3,9 +3,11 @@ package com.pastor126.galeriap.service;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -76,11 +78,16 @@ public class UsuarioService {
 		System.out.print("perfil não autorizado");
 			return "Sem acesso";
 			}
+	
 		
 	public List<UsuarioDTO> listarTodos() throws IOException{
 		if(autorizacao().equals("adm")) {
 		List<UsuarioEntity> usuarios = usuarioRepository.findAll();
-		return usuarios.stream().map(UsuarioDTO::new).toList();
+
+		return usuarios.stream()
+	            .map(UsuarioDTO::new)
+	            .sorted(Comparator.comparing(UsuarioDTO::getNome))
+	            .collect(Collectors.toList());
 	}
 		List<UsuarioEntity> usuarios = new ArrayList<>();
 		return usuarios.stream().map(UsuarioDTO::new).toList();
