@@ -1,8 +1,8 @@
 package com.pastor126.galeriap.dto;
 
-import org.springframework.beans.BeanUtils;
+//import org.springframework.beans.BeanUtils;
 
-import com.pastor126.galeriap.entity.FalecomigoEntity;
+//import com.pastor126.galeriap.entity.FalecomigoEntity;
 
 
 public class FalecomigoDTO {
@@ -16,9 +16,9 @@ public class FalecomigoDTO {
 	private String mensagem;
 
 	
-	public FalecomigoDTO(FalecomigoEntity falecomigo) {
-		BeanUtils.copyProperties(falecomigo, this);
-	}
+//	public FalecomigoDTO(FalecomigoEntity falecomigo) {
+//		BeanUtils.copyProperties(falecomigo, this);
+//	}
 	
 	public FalecomigoDTO() {
 		
