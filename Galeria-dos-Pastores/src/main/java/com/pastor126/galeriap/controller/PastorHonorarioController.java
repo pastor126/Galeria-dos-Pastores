@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.pastor126.galeriap.dto.PastoresHonorariosDTO;
 import com.pastor126.galeriap.service.PastoresHonorariosService;
 
@@ -32,18 +33,24 @@ public class PastorHonorarioController {
 	return pastoresHonorariosService.listarTodos();	
 	}
 	
+	@GetMapping("/{id}")
+	public PastoresHonorariosDTO buscarId(@PathVariable("id") Long id) throws IOException{
+	return pastoresHonorariosService.buscarPorId(id);
+	}
+	
 	@PostMapping
 	public void inserir(@RequestBody PastoresHonorariosDTO pastores) {
 		pastoresHonorariosService.inserir(pastores);
 	}
 	
-	@PutMapping
-	public PastoresHonorariosDTO alterar(@RequestBody PastoresHonorariosDTO pastores) {
-		return pastoresHonorariosService.alterar(pastores);
+	@PutMapping("/{id}")
+	public ResponseEntity<PastoresHonorariosDTO> alterar(@PathVariable Long id , @RequestBody PastoresHonorariosDTO pastores) throws IOException {
+		PastoresHonorariosDTO atual = pastoresHonorariosService.alterar(id, pastores);
+		return ResponseEntity.ok(atual);
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id){
+	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws IOException{
 		pastoresHonorariosService.excluir(id);
 		return ResponseEntity.ok().build();
 	}
