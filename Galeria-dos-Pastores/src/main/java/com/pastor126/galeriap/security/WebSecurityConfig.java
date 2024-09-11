@@ -50,6 +50,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/usuario/**").permitAll()
+                .requestMatchers("/falecomigo/**").permitAll()
                 .anyRequest().authenticated());
         
         http.addFilterBefore(authFilterToken(), UsernamePasswordAuthenticationFilter.class);
@@ -62,8 +63,6 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://pastor.up.railway.app");
-//        config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedHeader("*"); //Permite todos os cabeçalhos.
         config.addAllowedMethod("*"); //Permite todos os métodos HTTP.
         source.registerCorsConfiguration("/**", config); //Registra a configuração de CORS para todas as rotas (/**).

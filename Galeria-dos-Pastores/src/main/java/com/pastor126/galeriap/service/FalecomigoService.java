@@ -1,8 +1,6 @@
 package com.pastor126.galeriap.service;
 
 
-import java.io.Console;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.pastor126.galeriap.dto.FalecomigoDTO;
