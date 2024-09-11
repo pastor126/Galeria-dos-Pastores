@@ -8,7 +8,7 @@ public class FalecomigoDTO {
 	
 	private String email;
 	
-	private int telefone;
+	private String telefone;
 	
 	private String mensagem;
 
@@ -34,11 +34,11 @@ public class FalecomigoDTO {
 		this.email = email;
 	}
 
-	public int getTelefone() {
+	public String getTelefone() {
 		return telefone;
 	}
 
-	public void setTelefone(int telefone) {
+	public void setTelefone(String telefone) {
 		this.telefone = telefone;
 	}
 
