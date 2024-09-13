@@ -16,45 +16,51 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class AuthFilterToken extends OncePerRequestFilter{
+public class AuthFilterToken extends OncePerRequestFilter {
 
-	@Autowired
-	private JwtUtils jwtUtil;
-	
-	@Autowired
-	private UserDetailServiceImpl userDetailService;
-	
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
-		try {
-			String jwt = getToken(request);
-			if(jwt != null && jwtUtil.validateJwtToken(jwt)) {
-				
-				String username = jwtUtil.getUsernameFromToken(jwt);
-				
-				UserDetails userDetails = userDetailService.loadUserByUsername(username);
-				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,  null, userDetails.getAuthorities());
-				auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				
-				SecurityContextHolder.getContext().setAuthentication(auth);
-			}
-			
-		}catch(Exception e) {
-			System.out.println("Ocorreu um erro ao processar o token");
-		}finally {
-			
-		}
-		
-		filterChain.doFilter(request, response);
-	}
-	
-	private String getToken(HttpServletRequest request) {
-		String headerToken = request.getHeader("Authorization");
-		if(StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer")) {
-			return headerToken.replace("Bearer ","");
-		}
-		return null;
-	}
+    @Autowired
+    private JwtUtils jwtUtil;
 
+    @Autowired
+    private UserDetailServiceImpl userDetailService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        try {
+            // Obtém o token JWT da requisição
+            String jwt = getToken(request);
+
+            // Verifica se o token é válido e o contexto de segurança ainda não tem uma autenticação
+            if (jwt != null && jwtUtil.validateJwtToken(jwt) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                
+                // Obtém o username a partir do token JWT
+                String username = jwtUtil.getUsernameFromToken(jwt);
+                
+                // Carrega os detalhes do usuário usando o UserDetailsService
+                UserDetails userDetails = userDetailService.loadUserByUsername(username);
+                
+                // Cria o token de autenticação com as credenciais do usuário
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                
+                // Define a autenticação no contexto de segurança
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Não foi possível autenticar o usuário: " + e.getMessage());
+        }
+
+        // Continua o filtro para a próxima etapa na cadeia
+        filterChain.doFilter(request, response);
+    }
+
+    private String getToken(HttpServletRequest request) {
+        String headerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer ")) {
+            return headerToken.substring(7);  // Remove o prefixo "Bearer "
+        }
+        return null;
+    }
 }

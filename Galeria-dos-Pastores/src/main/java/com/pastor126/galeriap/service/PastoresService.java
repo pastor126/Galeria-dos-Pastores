@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.pastor126.galeriap.dto.PastoresDTO;
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
-import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.entity.PastoresEntity;
 import com.pastor126.galeriap.entity.UsuarioEntity;
 import com.pastor126.galeriap.repository.PastoresRepository;
@@ -66,7 +65,7 @@ public class PastoresService {
 	
 	
 	public List<PastoresDTO> listarTodos() throws IOException{
-		String perfil=null;
+		Long perfil=null;
 		String login = authDtoCacheService.get("authDto");
 		 if (login == null) {
 	            throw new IOException("authDto não encontrado");
@@ -78,12 +77,12 @@ public class PastoresService {
 		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
 		for(PerfilUsuarioDTO usuarioP : lista) {
 			if(usuarioP.getUsuario().getId().equals(idU)) {
-				perfil = usuarioP.getPerfil().getDescricao();
+				perfil = usuarioP.getPerfil().getId();
 				System.out.println("perfil é: "+ perfil);
 			break;
 			}			
 		}
-		if("administrador".equals(perfil) || "parasar".equals(perfil)) {
+		if(perfil == 1 || perfil == 3) {
 			 List<PastoresEntity> pastores = pastoresRepository.findAll();
 			 return pastores.stream()
 			            .map(PastoresDTO::new)
