@@ -65,7 +65,7 @@ public class PastoresService {
 	
 	
 	public List<PastoresDTO> listarTodos() throws IOException{
-		Long perfil=null;
+		String perfil=null;
 		String login = authDtoCacheService.get("authDto");
 		 if (login == null) {
 	            throw new IOException("authDto não encontrado");
@@ -77,12 +77,12 @@ public class PastoresService {
 		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
 		for(PerfilUsuarioDTO usuarioP : lista) {
 			if(usuarioP.getUsuario().getId().equals(idU)) {
-				perfil = usuarioP.getPerfil().getId();
+				perfil = usuarioP.getPerfil().getDescricao();
 				System.out.println("perfil é: "+ perfil);
 			break;
 			}			
 		}
-		if(perfil == 1 || perfil == 3) {
+		if("administrador".equals(perfil) || "parasar".equals(perfil)) {
 			 List<PastoresEntity> pastores = pastoresRepository.findAll();
 			 return pastores.stream()
 			            .map(PastoresDTO::new)

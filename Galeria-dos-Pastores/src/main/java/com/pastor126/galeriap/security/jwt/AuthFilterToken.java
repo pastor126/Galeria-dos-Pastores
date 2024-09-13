@@ -28,38 +28,29 @@ public class AuthFilterToken extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            // Obtém o token JWT da requisição
             String jwt = getToken(request);
 
-            // Verifica se o token é válido e o contexto de segurança ainda não tem uma autenticação
-            if (jwt != null && jwtUtil.validateJwtToken(jwt) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                
-                // Obtém o username a partir do token JWT
+            if (StringUtils.hasText(jwt) && jwtUtil.validateJwtToken(jwt)) {
                 String username = jwtUtil.getUsernameFromToken(jwt);
-                
-                // Carrega os detalhes do usuário usando o UserDetailsService
-                UserDetails userDetails = userDetailService.loadUserByUsername(username);
-                
-                // Cria o token de autenticação com as credenciais do usuário
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                
-                // Define a autenticação no contexto de segurança
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
 
+                UserDetails userDetails = userDetailService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         } catch (Exception e) {
-            System.out.println("Não foi possível autenticar o usuário: " + e.getMessage());
+            logger.error("Não foi possível autenticar o usuário: {}", e);
         }
 
-        // Continua o filtro para a próxima etapa na cadeia
         filterChain.doFilter(request, response);
     }
 
     private String getToken(HttpServletRequest request) {
         String headerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer ")) {
-            return headerToken.substring(7);  // Remove o prefixo "Bearer "
+            return headerToken.substring(7);
         }
         return null;
     }
