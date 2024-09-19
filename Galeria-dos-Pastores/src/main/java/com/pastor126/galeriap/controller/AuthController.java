@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pastor126.galeriap.dto.AcessDTO;
 import com.pastor126.galeriap.dto.AuthenticationDTO;
 import com.pastor126.galeriap.dto.UsuarioDTO;
-import com.pastor126.galeriap.service.AuthDtoCacheService;
 import com.pastor126.galeriap.service.AuthService;
 import com.pastor126.galeriap.service.UsuarioService;
 
@@ -29,13 +28,9 @@ public class AuthController {
 	@Autowired
 	private UsuarioService usuarioService;
 	
-	@Autowired
-    private AuthDtoCacheService authDtoCacheService;
 	
 	@PostMapping(value = "/login")
 	public ResponseEntity<AcessDTO> login(@RequestBody AuthenticationDTO authDto){
-		String dto = authDto.getUsername().toString();
-		authDtoCacheService.save("authDto", dto);
 		AcessDTO acessDTO = authService.login(authDto);
 		
         return ResponseEntity.ok(acessDTO);

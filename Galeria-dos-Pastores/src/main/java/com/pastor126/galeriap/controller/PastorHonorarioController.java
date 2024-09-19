@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pastor126.galeriap.dto.PastoresHonorariosDTO;
 import com.pastor126.galeriap.service.PastoresHonorariosService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @RestController
 @RequestMapping(value = "/pastoresHonorarios")
@@ -29,13 +31,13 @@ public class PastorHonorarioController {
 
 	
 	@GetMapping
-	public List<PastoresHonorariosDTO> listarTodos() throws IOException{
-	return pastoresHonorariosService.listarTodos();	
+	public List<PastoresHonorariosDTO> listarTodos(HttpServletRequest request) throws IOException{
+	return pastoresHonorariosService.listarTodos(request);	
 	}
 	
 	@GetMapping("/{id}")
-	public PastoresHonorariosDTO buscarId(@PathVariable("id") Long id) throws IOException{
-	return pastoresHonorariosService.buscarPorId(id);
+	public PastoresHonorariosDTO buscarId(@PathVariable("id") Long id, HttpServletRequest request) throws IOException{
+	return pastoresHonorariosService.buscarPorId(id, request);
 	}
 	
 	@PostMapping
@@ -44,14 +46,14 @@ public class PastorHonorarioController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<PastoresHonorariosDTO> alterar(@PathVariable Long id , @RequestBody PastoresHonorariosDTO pastores) throws IOException {
-		PastoresHonorariosDTO atual = pastoresHonorariosService.alterar(id, pastores);
+	public ResponseEntity<PastoresHonorariosDTO> alterar(@PathVariable Long id , @RequestBody PastoresHonorariosDTO pastores, HttpServletRequest request) throws IOException {
+		PastoresHonorariosDTO atual = pastoresHonorariosService.alterar(id, pastores, request);
 		return ResponseEntity.ok(atual);
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws IOException{
-		pastoresHonorariosService.excluir(id);
+	public ResponseEntity<Void> excluir(@PathVariable("id") Long id, HttpServletRequest request) throws IOException{
+		pastoresHonorariosService.excluir(id, request);
 		return ResponseEntity.ok().build();
 	}
 

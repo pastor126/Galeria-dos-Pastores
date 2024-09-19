@@ -1,33 +1,35 @@
 package com.pastor126.galeriap.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.pastor126.galeriap.entity.UsuarioEntity;
 import com.pastor126.galeriap.repository.UsuarioRepository;
+import com.pastor126.galeriap.entity.UsuarioEntity;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
-    private static final Logger logger = LoggerFactory.getLogger(UserDetailServiceImpl.class);
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioRepository userRepository;
+    
+    @Autowired
+    private PerfilUsuarioService perfilUsuarioService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.info("Tentando carregar usuário com login: " + username);
-        UsuarioEntity usuario = usuarioRepository.findByLogin(username)
-            .orElseThrow(() -> {
-                logger.error("Usuário não encontrado com login: " + username);
-                return new UsernameNotFoundException("Usuário não encontrado com login: " + username);
-            });
-        
-        logger.info("Usuário encontrado: " + usuario.getLogin() + ", " + usuario.getNome());
-        return UserDetailsImpl.build(usuario);
+        UsuarioEntity user = userRepository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        return UserDetailsImpl.build(user, perfilUsuarioService);
+    }
+
+    public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
+    	UsuarioEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+
+        return UserDetailsImpl.build(user, perfilUsuarioService);
     }
 }

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.service.UsuarioService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping(value = "/usuario")
 @CrossOrigin
@@ -34,19 +36,19 @@ public class UsuarioController {
 	}
 	
 	@GetMapping
-	public List<UsuarioDTO> listarTodos() throws IOException{
-		return usuarioService.listarTodos();
+	public List<UsuarioDTO> listarTodos(HttpServletRequest request) throws IOException{
+		return usuarioService.listarTodos(request);
 	}
 	
 	@PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> alterar(@PathVariable Long id, @RequestBody UsuarioDTO usuario) throws IOException {
-        UsuarioDTO atualizado = usuarioService.alterar(id, usuario);
+    public ResponseEntity<UsuarioDTO> alterar(@PathVariable Long id, @RequestBody UsuarioDTO usuario, HttpServletRequest request) throws IOException {
+        UsuarioDTO atualizado = usuarioService.alterar(id, usuario, request);
         return ResponseEntity.ok(atualizado);
     }
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws IOException{
-		usuarioService.excluir(id);
+	public ResponseEntity<Void> excluir(@PathVariable("id") Long id, HttpServletRequest request) throws IOException{
+		usuarioService.excluir(id, request);
 		return ResponseEntity.ok().build();
 	}
 

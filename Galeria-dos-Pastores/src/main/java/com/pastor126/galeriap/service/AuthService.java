@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.pastor126.galeriap.dto.AcessDTO;
 import com.pastor126.galeriap.dto.AuthenticationDTO;
+import com.pastor126.galeriap.entity.AcessEntity;
 import com.pastor126.galeriap.entity.UsuarioEntity;
+import com.pastor126.galeriap.repository.AcessRepository;
 import com.pastor126.galeriap.repository.UsuarioRepository;
 import com.pastor126.galeriap.security.jwt.JwtUtils;
 
@@ -30,6 +32,9 @@ public class AuthService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private AcessRepository acessRepository;
+    
     public AcessDTO login(AuthenticationDTO authDTO) {
         try {
         	// Valida a situação do usuário
@@ -50,7 +55,10 @@ public class AuthService {
             
             String token = jwtUtils.generateTokenFromUserDetailsImpl(userAuthenticate);
             
-            AcessDTO acessDTO = new AcessDTO(token);
+            AcessEntity acessEntity = acessRepository.findByUsername(authDTO.getUsername()).get();
+            acessEntity.setToken(token);
+            acessRepository.save(acessEntity);
+            AcessDTO acessDTO = new AcessDTO(acessEntity);
             return acessDTO;
             
         } catch (BadCredentialsException e) {

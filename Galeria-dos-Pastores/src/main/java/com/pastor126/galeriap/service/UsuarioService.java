@@ -16,18 +16,24 @@ import org.springframework.stereotype.Service;
 
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
 import com.pastor126.galeriap.dto.UsuarioDTO;
+import com.pastor126.galeriap.entity.AcessEntity;
 import com.pastor126.galeriap.entity.PerfilEntity;
 import com.pastor126.galeriap.entity.PerfilUsuarioEntity;
 import com.pastor126.galeriap.entity.UsuarioEntity;
 import com.pastor126.galeriap.entity.VerificadorPendenciaEntity;
 import com.pastor126.galeriap.entity.enums.SituacaoUsuario;
+import com.pastor126.galeriap.repository.AcessRepository;
 import com.pastor126.galeriap.repository.PerfilRepository;
 import com.pastor126.galeriap.repository.PerfilUsuarioRepository;
 import com.pastor126.galeriap.repository.UsuarioRepository;
 import com.pastor126.galeriap.repository.VerificadorPendenciaRepository;
+import com.pastor126.galeriap.security.WebSecurityConfig;
+import com.pastor126.galeriap.security.jwt.JwtUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
-public class UsuarioService {
+public class UsuarioService{
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -42,7 +48,10 @@ public class UsuarioService {
 	private PerfilUsuarioService perfilUsuarioService;
 	
 	@Autowired
-	public AuthDtoCacheService authDtoCacheService;
+	public AcessService acessService;
+	
+	@Autowired
+	public AcessRepository acessRepo;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -51,37 +60,63 @@ public class UsuarioService {
 	private EmailService emailService;
 	
 	@Autowired
+	private WebSecurityConfig tokenFilter;
+	
+	@Autowired
+	private JwtUtils jwtUtils;
+	
+	@Autowired
 	private VerificadorPendenciaRepository verificadorRepository;
 	
-	private String autorizacao() throws IOException {
-		String perfil=null;
-		String login = authDtoCacheService.get("authDto");
-		 if (login == null) {
+	 public String autorizacao(HttpServletRequest request) throws IOException {
+	        // Recupera o token da requisição
+	        String token = tokenFilter.authFilterToken().getToken(request);
+	        
+	        // Extrai o login (username) do token
+	        String login = jwtUtils.getUsernameFromToken(token);
+
+	        if (login == null) {
 	            throw new IOException("authDto não encontrado");
 	        }
-		System.out.println("Login é: "+login);
-		Optional<UsuarioEntity> usuario = usuarioRepository.findByLogin(login);
-		Long idU = usuario.get().getId();
-		System.out.println("idU é: "+ idU);
-		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
-		for(PerfilUsuarioDTO usuarioP : lista) {
-			if(usuarioP.getUsuario().getId().equals(idU)) {
-				perfil = usuarioP.getPerfil().getDescricao();
-				System.out.println("perfil é: "+ perfil);
-			break;
-			}			
-		}
-		if("administrador".equals(perfil)) {
-			System.out.print("perfil autorizado - adm");
-			return "adm";
-		}
-		System.out.print("perfil não autorizado");
-			return "Sem acesso";
-			}
+
+	        System.out.println("Login é: " + login);
+	        
+	        // Busca o usuário no banco a partir do login
+	        Optional<UsuarioEntity> usuario = usuarioRepository.findByLogin(login);
+
+	        if (usuario.isEmpty()) {
+	            throw new IOException("Usuário não encontrado");
+	        }
+
+	        Long idU = usuario.get().getId();
+	        System.out.println("idU é: " + idU);
+
+	        // Busca todos os perfis de usuário e verifica se o usuário tem o perfil "administrador"
+	        String perfil = null;
+	        List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
+	        
+	        for (PerfilUsuarioDTO usuarioP : lista) {
+	            if (usuarioP.getUsuario().getId().equals(idU)) {
+	                perfil = usuarioP.getPerfil().getDescricao();
+	                System.out.println("perfil é: " + perfil);
+	                break;
+	            }
+	        }
+
+	        if ("administrador".equals(perfil)) {
+	            System.out.println("perfil autorizado - adm");
+	            return "adm";
+	        }
+
+	        System.out.println("perfil não autorizado");
+	        return "Sem acesso";
+	    }
+
+
 	
 		
-	public List<UsuarioDTO> listarTodos() throws IOException{
-		if(autorizacao().equals("adm")) {
+	public List<UsuarioDTO> listarTodos(HttpServletRequest request) throws IOException{
+		if(autorizacao(request).equals("adm")) {
 		List<UsuarioEntity> usuarios = usuarioRepository.findAll();
 
 		return usuarios.stream()
@@ -102,7 +137,7 @@ public class UsuarioService {
 		usuarioRepository.save(usuarioEntity);
 		
 		PerfilUsuarioEntity perfilUsu = new PerfilUsuarioEntity();
-		Long idp = (long) 2;
+		Long idp = 2L;
 		Optional<PerfilEntity> perfilOp = perfilRepository.findById(idp);
 		PerfilEntity perfil = perfilOp.get();
 		
@@ -123,16 +158,19 @@ public class UsuarioService {
 				+ verificador.getUuid());
 	}
 	
-	public UsuarioDTO alterar(Long id, UsuarioDTO usuario) throws IOException {
+	public UsuarioDTO alterar(Long id, UsuarioDTO usuario, HttpServletRequest request) throws IOException {
 		 Optional<UsuarioEntity> optionalUsuario = usuarioRepository.findById(id);
-		if(autorizacao().equals("adm")) {
+		if(autorizacao(request).equals("adm")) {
 			UsuarioEntity usuarioedit = optionalUsuario.get();
 	        usuarioedit.setNome(usuario.getNome());
 	        usuarioedit.setLogin(usuario.getLogin());
 	        usuarioedit.setEmail(usuario.getEmail());
 	        usuarioedit.setSituacao(usuario.getSituacao());
+	        
+	        AcessEntity acess = new AcessEntity(acessService.findByUsername(usuarioedit.getLogin()));
+	        acess.setUsername(usuario.getLogin());
+	        acessRepo.save(acess);
 
-	        // Salva o usuário atualizado no banco de dados
 	        UsuarioEntity usuarioAtualizado = usuarioRepository.save(usuarioedit);
 
 	        // Converte a entidade para DTO e retorna
@@ -144,25 +182,28 @@ public class UsuarioService {
 	
 	
 	
-	public void excluir(Long id) throws IOException {
-		if(autorizacao().equals("adm")) {
+	public void excluir(Long id, HttpServletRequest request) throws IOException {
+		if(autorizacao(request).equals("adm")) {
 		UsuarioEntity usuario = usuarioRepository.findById(id).get();
 		Long idPerfil = perfilUsuarioRepository.findByUsuario(usuario).get().getId();
+		String username = usuario.getLogin();
 		perfilUsuarioService.excluir(idPerfil);
+		AcessEntity acess = new AcessEntity(acessService.findByUsername(username));
+		acessService.excluir(acess.getId());
 		usuarioRepository.deleteById(id);
 		}
 	}
 	
-	public UsuarioDTO buscarPorId(Long id) throws IOException {
-		if(autorizacao().equals("adm")) {
+	public UsuarioDTO buscarPorId(Long id, HttpServletRequest request) throws IOException {
+		if(autorizacao(request).equals("adm")) {
 		return new UsuarioDTO(usuarioRepository.findById(id).get());
 	}
 		UsuarioDTO u = new UsuarioDTO();
 		return u;
 	}
 	
-	 public UsuarioEntity buscarPorLogin(String login) throws IOException, RuntimeException {
-			if(autorizacao().equals("adm")) {
+	 public UsuarioEntity buscarPorLogin(String login, HttpServletRequest request) throws IOException, RuntimeException {
+			if(autorizacao(request).equals("adm")) {
 	        Optional<UsuarioEntity> usuarioOpt = usuarioRepository.findByLogin(login);
 	        return usuarioOpt.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 	    }

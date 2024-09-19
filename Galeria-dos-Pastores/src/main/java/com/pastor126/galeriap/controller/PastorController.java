@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pastor126.galeriap.dto.PastoresDTO;
 import com.pastor126.galeriap.service.PastoresService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @RestController
 @RequestMapping(value = "/pastores")
@@ -28,13 +30,13 @@ public class PastorController {
 
 	
 	@GetMapping
-	public List<PastoresDTO> listarTodos() throws IOException{
-	return pastoresService.listarTodos();	
+	public List<PastoresDTO> listarTodos(HttpServletRequest request) throws IOException{
+	return pastoresService.listarTodos(request);	
 	}
 	
 	@GetMapping("/{id}")
-	public PastoresDTO buscarId(@PathVariable("id") Long id) throws IOException{
-	return pastoresService.buscarPorId(id);
+	public PastoresDTO buscarId(@PathVariable("id") Long id, HttpServletRequest request) throws IOException{
+	return pastoresService.buscarPorId(id, request);
 	}
 	
 	@PostMapping
@@ -43,15 +45,15 @@ public class PastorController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<PastoresDTO> alterar(@PathVariable Long id ,@RequestBody PastoresDTO pastores) throws IOException {
-        PastoresDTO atualizado = pastoresService.alterar(id, pastores);
+	public ResponseEntity<PastoresDTO> alterar(@PathVariable Long id ,@RequestBody PastoresDTO pastores, HttpServletRequest request) throws IOException {
+        PastoresDTO atualizado = pastoresService.alterar(id, pastores, request);
         return ResponseEntity.ok(atualizado);
 		
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws IOException{
-		pastoresService.excluir(id);
+	public ResponseEntity<Void> excluir(@PathVariable("id") Long id, HttpServletRequest request) throws IOException{
+		pastoresService.excluir(id, request);
 		return ResponseEntity.ok().build();
 	}
 

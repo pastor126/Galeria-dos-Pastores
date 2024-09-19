@@ -1,83 +1,86 @@
 package com.pastor126.galeriap.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
 import com.pastor126.galeriap.entity.UsuarioEntity;
 
-public class UserDetailsImpl implements UserDetails{
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
+
+public class UserDetailsImpl implements UserDetails {
+    
+	private static final long serialVersionUID = 1L;
 	private Long id;
-	
-	private String name;
-	
-	private String username;
-	
-	private String email;
-	
-	private String password;
-	
-	
-	public UserDetailsImpl(Long id, String name, String username, String password, String email,
-			Collection<? extends GrantedAuthority> authorities) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.username = username;
-		this.password = password;
-		this.email = email;
-		this.authorities = authorities;
-	}
+    private String username;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+    
+   
 
-	public static UserDetailsImpl build(UsuarioEntity usuario) {
-		
-		return new UserDetailsImpl(
-				usuario.getId(), 
-				usuario.getNome(), 
-				usuario.getLogin(),
-				usuario.getSenha(),
-				usuario.getEmail(), 
-				new ArrayList<>());
-	}
-	
-	private Collection<? extends GrantedAuthority> authorities;
-	
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
-	}
+    public UserDetailsImpl(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+    }
+    
+	public static UserDetailsImpl build(UsuarioEntity usuario, PerfilUsuarioService perfilUsuarioService) {
+        PerfilUsuarioDTO perfil = perfilUsuarioService.buscarPorUsuario(usuario);
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + perfil.getPerfil().getDescricao().toUpperCase());
+        List<GrantedAuthority> authorities = Collections.singletonList(authority);
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
 
-	@Override
-	public String getUsername() {
-		return username;
-	}
+        return new UserDetailsImpl(
+            usuario.getId(),
+            usuario.getLogin(),
+            usuario.getSenha(),
+            authorities
+        );
+    }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 
+    // Implemente os outros métodos requeridos por UserDetails...
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

@@ -15,6 +15,10 @@ import com.pastor126.galeriap.entity.PastoresHonorariosEntity;
 import com.pastor126.galeriap.entity.UsuarioEntity;
 import com.pastor126.galeriap.repository.PastoresHonorariosRepository;
 import com.pastor126.galeriap.repository.UsuarioRepository;
+import com.pastor126.galeriap.security.WebSecurityConfig;
+import com.pastor126.galeriap.security.jwt.JwtUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 
@@ -22,39 +26,26 @@ import com.pastor126.galeriap.repository.UsuarioRepository;
 public class PastoresHonorariosService {
 
 	@Autowired
-	PastoresHonorariosRepository pastoresHonorariosRepository;
-	
-	@Autowired
-	UsuarioService usuarioService;
-	
+	private PastoresHonorariosRepository pastoresHonorariosRepository;
+		
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 		
 	@Autowired
-	PerfilUsuarioService perfilUsuarioService;
+	private PerfilUsuarioService perfilUsuarioService;
 	
-	   @Autowired
-	    private AuthDtoCacheService authDtoCacheService;
+	@Autowired
+    private JwtUtils jwtUtils;
+	
+	@Autowired
+	private WebSecurityConfig tokenFilter;
+	
+	
 	
 	   
-	public List<PastoresHonorariosDTO> listarTodos() throws IOException{
-		String perfil=null;
-		String login = authDtoCacheService.get("authDto");
-		 if (login == null) {
-	            throw new IOException("authDto não encontrado");
-	        }
-		System.out.println("Login é: "+login);
-		UsuarioEntity usuario = usuarioService.buscarPorLogin(login);
-		Long idU = usuario.getId();
-		System.out.println("idU é: "+ idU);
-		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
-		for(PerfilUsuarioDTO usuarioP : lista) {
-			if(usuarioP.getUsuario().getId().equals(idU)) {
-				perfil = usuarioP.getPerfil().getDescricao();
-				System.out.println("perfil é: "+ perfil);
-			break;
-			}			
-		}
+	public List<PastoresHonorariosDTO> listarTodos(HttpServletRequest request) throws IOException{
+		String perfil= autorizacao(request);
+		
 		if("administrador".equals(perfil) || "parasar".equals(perfil)) {
 			 List<PastoresHonorariosEntity> pastores = pastoresHonorariosRepository.findAll();
 			return pastores.stream()
@@ -77,9 +68,9 @@ public class PastoresHonorariosService {
 	}
 	
 	
-	public PastoresHonorariosDTO buscarPorId(Long id) throws IOException{
+	public PastoresHonorariosDTO buscarPorId(Long id, HttpServletRequest request) throws IOException{
 		PastoresHonorariosDTO pastores = new PastoresHonorariosDTO();
-		if(autentica()) {
+		if(autorizacao(request).equalsIgnoreCase("administrador")) {
 		return new PastoresHonorariosDTO(pastoresHonorariosRepository.findById(id).get());
 		}else {
 			return pastores;
@@ -91,9 +82,9 @@ public class PastoresHonorariosService {
 		pastoresHonorariosRepository.save(pastoresHonorariosEntity);
 	}
 	
-	public PastoresHonorariosDTO alterar(Long id, PastoresHonorariosDTO pastores) throws IOException {
+	public PastoresHonorariosDTO alterar(Long id, PastoresHonorariosDTO pastores, HttpServletRequest request) throws IOException {
 		Optional<PastoresHonorariosEntity> pastoresOpt = pastoresHonorariosRepository.findById(id);
-		if(autorizacao().equals("adm")) {
+		if(autorizacao(request).equals("administrador")) {
 			PastoresHonorariosEntity pastoredit = pastoresOpt.get();
 	        pastoredit.setNumero(pastores.getNumero());
 	        pastoredit.setNome(pastores.getNome());
@@ -108,66 +99,53 @@ public class PastoresHonorariosService {
 }
 	
 	
-	public void excluir(Long id) throws IOException {
-		if(autorizacao().equals("adm")) {
+	public void excluir(Long id, HttpServletRequest request) throws IOException {
+		if(autorizacao(request).equals("administrador")) {
 		PastoresHonorariosEntity pastores = pastoresHonorariosRepository.findById(id).get();
 		pastoresHonorariosRepository.delete(pastores);
 		}
 	}
 	
 	
-	private String autorizacao() throws IOException {
-		String perfil=null;
-		String login = authDtoCacheService.get("authDto");
-		 if (login == null) {
-	            throw new IOException("authDto não encontrado");
-	        }
-		System.out.println("Login é: "+login);
-		Optional<UsuarioEntity> usuario = usuarioRepository.findByLogin(login);
-		Long idU = usuario.get().getId();
-		System.out.println("idU é: "+ idU);
-		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
-		for(PerfilUsuarioDTO usuarioP : lista) {
-			if(usuarioP.getUsuario().getId().equals(idU)) {
-				perfil = usuarioP.getPerfil().getDescricao();
-				System.out.println("perfil é: "+ perfil);
-			break;
-			}			
-		}
-		if("administrador".equals(perfil)) {
-			System.out.print("perfil autorizado - adm");
-			return "adm";
-		}
-		System.out.print("perfil não autorizado");
-			return "Sem acesso";
-			}
-		
 	
 	
-	public boolean autentica() throws IOException {
-		String perfil=null;
-		String login = authDtoCacheService.get("authDto");
-		 if (login == null) {
-	            throw new IOException("authDto não encontrado");
-	        }
-		UsuarioEntity usuario = usuarioService.buscarPorLogin(login);
-		Long idU = usuario.getId();
-		System.out.println("idU é: "+ idU);
-		List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
-		for(PerfilUsuarioDTO usuarioP : lista) {
-			if(usuarioP.getUsuario().getId().equals(idU)) {
-				perfil = usuarioP.getPerfil().getDescricao();
-			break;
-			}			
-		}
-		if("administrador".equals(perfil)) {
-			 boolean autentica = true;
-			return autentica;
-	}else {
-			boolean autentica = false;
-			return autentica;
-			}	
-	
-	}
+	public String autorizacao(HttpServletRequest request) throws IOException {
+        // Recupera o token da requisição
+        String token = tokenFilter.authFilterToken().getToken(request);
+        
+        // Extrai o login (username) do token
+        String login = jwtUtils.getUsernameFromToken(token);
+
+        if (login == null) {
+            throw new IOException("authDto não encontrado");
+        }
+
+        System.out.println("Login é: " + login);
+        
+        // Busca o usuário no banco a partir do login
+        Optional<UsuarioEntity> usuario = usuarioRepository.findByLogin(login);
+
+        if (usuario.isEmpty()) {
+            throw new IOException("Usuário não encontrado");
+        }
+
+        Long idU = usuario.get().getId();
+        System.out.println("idU é: " + idU);
+
+        // Busca todos os perfis de usuário e verifica se o usuário tem o perfil "administrador"
+        String perfil = null;
+        List<PerfilUsuarioDTO> lista = perfilUsuarioService.listarTodos();
+        
+        for (PerfilUsuarioDTO usuarioP : lista) {
+            if (usuarioP.getUsuario().getId().equals(idU)) {
+                perfil = usuarioP.getPerfil().getDescricao();
+                System.out.println("perfil é: " + perfil);
+                break;
+            }
+        }
+
+          return perfil;
+        }
+
 	
 }
