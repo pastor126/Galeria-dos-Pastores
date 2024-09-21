@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+import com.pastor126.galeriap.dto.AcessDTO;
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
 import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.entity.AcessEntity;
@@ -131,10 +131,13 @@ public class UsuarioService{
 
 	public void inserirNovoUsuario(UsuarioDTO usuario) {
 		UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
+		AcessDTO acessDTO = new AcessDTO();
 		usuarioEntity.setSenha(passwordEncoder.encode(usuario.getSenha()));
 		usuarioEntity.setSituacao(SituacaoUsuario.PENDENTE);
 		usuarioEntity.setId(null);
 		usuarioRepository.save(usuarioEntity);
+		acessDTO.setUsername(usuarioEntity.getLogin());
+		acessService.inserir(acessDTO);
 		
 		PerfilUsuarioEntity perfilUsu = new PerfilUsuarioEntity();
 		Long idp = 2L;

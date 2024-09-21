@@ -18,7 +18,6 @@ public class AcessService {
 	
 	public void inserir(AcessDTO acessDTO) {
 		AcessEntity acess = new AcessEntity(acessDTO);
-		acess.setId(null);
 		acessRepository.save(acess);
 	}
 	

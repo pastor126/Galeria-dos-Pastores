@@ -38,14 +38,10 @@ public class AcessEntity {
 		// TODO Auto-generated constructor stub
 	}
 
-	public AcessEntity(String token, String username) {
-		super();
-		this.token = token;
-		this.username = username;
-	}
 
 	public AcessEntity(AcessDTO acessDTO) {
-		super();
+		  this.username = acessDTO.getUsername();
+		  this.token = acessDTO.getToken();
 	}
 
 	public String getToken() {
@@ -65,12 +61,6 @@ public class AcessEntity {
 		this.id = id;
 	}
 
-	public AcessEntity(Long id, String token, String username) {
-		super();
-		this.id = id;
-		this.token = token;
-		this.username = username;
-	}
 
 	@Override
 	public int hashCode() {
