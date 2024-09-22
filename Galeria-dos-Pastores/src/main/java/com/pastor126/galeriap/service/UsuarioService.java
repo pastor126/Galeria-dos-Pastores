@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import com.pastor126.galeriap.dto.AcessDTO;
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
 import com.pastor126.galeriap.dto.UsuarioDTO;
-import com.pastor126.galeriap.entity.AcessEntity;
 import com.pastor126.galeriap.entity.PerfilEntity;
 import com.pastor126.galeriap.entity.PerfilUsuarioEntity;
 import com.pastor126.galeriap.entity.UsuarioEntity;
@@ -162,41 +161,79 @@ public class UsuarioService{
 	}
 	
 	public UsuarioDTO alterar(Long id, UsuarioDTO usuario, HttpServletRequest request) throws IOException {
-		 Optional<UsuarioEntity> optionalUsuario = usuarioRepository.findById(id);
-		if(autorizacao(request).equals("adm")) {
-			UsuarioEntity usuarioedit = optionalUsuario.get();
-	        usuarioedit.setNome(usuario.getNome());
-	        usuarioedit.setLogin(usuario.getLogin());
-	        usuarioedit.setEmail(usuario.getEmail());
-	        usuarioedit.setSituacao(usuario.getSituacao());
-	        
-	        AcessEntity acess = new AcessEntity(acessService.findByUsername(usuarioedit.getLogin()));
-	        acess.setUsername(usuario.getLogin());
-	        acessRepo.save(acess);
+	    // Busca o usuário no banco de dados
+	    Optional<UsuarioEntity> optionalUsuario = usuarioRepository.findById(id);
+	    
+	    // Verifica se o perfil de autorização é "adm"
+	    if (autorizacao(request).equals("adm")) {
+	        // Verifica se o usuário está presente
+	        if (optionalUsuario.isPresent()) {
+	            UsuarioEntity usuarioedit = optionalUsuario.get();
+	            System.out.println("Username linha 173: " + usuarioedit.getLogin());
+	            String nameOrigin = usuarioedit.getLogin();
+	            
+	            // Atualiza os dados do usuário
+	            usuarioedit.setId(id);
+	            usuarioedit.setNome(usuario.getNome());
+	            usuarioedit.setLogin(usuario.getLogin());
+	            usuarioedit.setEmail(usuario.getEmail());
+	            usuarioedit.setSituacao(usuario.getSituacao());
+	            System.out.println("Username linha 182: " + nameOrigin);
+	            
+	            // Busca os dados de acesso relacionados ao login original
+	            AcessDTO acess = acessService.findByUsername(nameOrigin);
+	            Long idOrigin = acess.getId();
+	            System.out.println("Id linha 187: " + idOrigin);
+	            
+	            // Atualiza o nome de usuário no registro de acesso
+	            acess.setUsername(usuarioedit.getLogin());
+	            acess.setToken(null);  // Limpa o token, se necessário
+	            acessService.alterar(idOrigin, acess);  // Chama o método para atualizar
+	            
+	            // Salva as alterações no usuário
+	            UsuarioEntity usuarioAtualizado = usuarioRepository.save(usuarioedit);
 
-	        UsuarioEntity usuarioAtualizado = usuarioRepository.save(usuarioedit);
-
-	        // Converte a entidade para DTO e retorna
-	        return new UsuarioDTO(usuarioAtualizado);
+	            // Converte a entidade para DTO e retorna
+	            return new UsuarioDTO(usuarioAtualizado);
+	        } else {
+	            throw new RuntimeException("Usuário com ID " + id + " não encontrado.");
+	        }
+	    }
+	    
+	    // Caso o perfil não seja "adm", retorna um DTO vazio
+	    return new UsuarioDTO();
 	}
-	UsuarioDTO u = new UsuarioDTO();
-	return u;
-}
-	
+
 	
 	
 	public void excluir(Long id, HttpServletRequest request) throws IOException {
-		if(autorizacao(request).equals("adm")) {
-		UsuarioEntity usuario = usuarioRepository.findById(id).get();
-		Long idPerfil = perfilUsuarioRepository.findByUsuario(usuario).get().getId();
-		String username = usuario.getLogin();
-		perfilUsuarioService.excluir(idPerfil);
-		AcessEntity acess = new AcessEntity(acessService.findByUsername(username));
-		acessService.excluir(acess.getId());
-		usuarioRepository.deleteById(id);
-		}
+	    if(autorizacao(request).equals("adm")) {
+	        // Busca o usuário e verifica se está presente
+	        Optional<UsuarioEntity> usuarioOpt = usuarioRepository.findById(id);
+	        
+	        if (usuarioOpt.isPresent()) {
+	            UsuarioEntity usuario = usuarioOpt.get();
+	            Long idPerfil = perfilUsuarioRepository.findByUsuario(usuario)
+	                                                   .orElseThrow(() -> new RuntimeException("Perfil não encontrado para o usuário: " + usuario.getLogin()))
+	                                                   .getId();
+
+	            String username = usuario.getLogin();
+	            
+	            // Exclui o perfil e o acesso
+	            perfilUsuarioService.excluir(idPerfil);
+	            System.out.println("username: " + username);
+	            AcessDTO acess =acessService.findByUsername(username);
+	            System.out.println("acess id: " + acess.getId());
+	            acessService.excluir(acess.getId());
+	            
+	            // Exclui o usuário
+	            usuarioRepository.deleteById(id);
+	        } else {
+	            throw new RuntimeException("Usuário com ID " + id + " não encontrado.");
+	        }
+	    }
 	}
-	
+
 	public UsuarioDTO buscarPorId(Long id, HttpServletRequest request) throws IOException {
 		if(autorizacao(request).equals("adm")) {
 		return new UsuarioDTO(usuarioRepository.findById(id).get());

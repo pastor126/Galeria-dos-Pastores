@@ -17,13 +17,20 @@ public class AcessService {
 	private AcessRepository acessRepository;
 	
 	public void inserir(AcessDTO acessDTO) {
+        // Verifica se o token já existe
+        Optional<AcessEntity> existingAcess = acessRepository.findByToken(acessDTO.getToken());
+        if (existingAcess.isPresent()) {
+            throw new RuntimeException("Token já existe");
+        }else {
 		AcessEntity acess = new AcessEntity(acessDTO);
 		acessRepository.save(acess);
+        }
 	}
 	
 	public AcessDTO alterar(Long id, AcessDTO acess) throws IOException {
+		System.out.println("Buscando AcessEntity com ID: " + id);
 		 Optional<AcessEntity> optionalUsuario = acessRepository.findById(id);
-	
+		 System.out.println("AcessEntity com ID: " + optionalUsuario.get().getId());
 			AcessEntity usuarioedit = optionalUsuario.get();
 	        usuarioedit.setUsername(acess.getUsername()); 
 	        usuarioedit.setToken(acess.getToken());

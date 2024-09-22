@@ -9,9 +9,6 @@ import com.pastor126.galeriap.entity.AcessEntity;
 public interface AcessRepository extends JpaRepository<AcessEntity, Long>{
 	
 	public Optional<AcessEntity>findByUsername(String username);
+	public Optional<AcessEntity> findByToken(String token);
 	
-	public default Optional<AcessEntity> findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

@@ -46,7 +46,8 @@ public class PerfilUsuarioService {
 	}
 	
 	public void excluir(Long id) {
-		PerfilUsuarioEntity perfilUsuario = perfilUsuarioRepository.findById(id).get();
+		PerfilUsuarioEntity perfilUsuario = perfilUsuarioRepository.findById(id)
+				 .orElseThrow(() -> new RuntimeException("Perfil não encontrado com ID: " + id));
 		perfilUsuarioRepository.delete(perfilUsuario);
 	}
 	
