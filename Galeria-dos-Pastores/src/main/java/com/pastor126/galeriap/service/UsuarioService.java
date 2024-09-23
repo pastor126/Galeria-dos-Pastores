@@ -136,6 +136,7 @@ public class UsuarioService{
 		usuarioEntity.setId(null);
 		usuarioRepository.save(usuarioEntity);
 		acessDTO.setUsername(usuarioEntity.getLogin());
+		acessDTO.setToken(UUID.randomUUID().toString());
 		acessService.inserir(acessDTO);
 		
 		PerfilUsuarioEntity perfilUsu = new PerfilUsuarioEntity();
