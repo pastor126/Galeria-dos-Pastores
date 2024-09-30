@@ -3,7 +3,6 @@ package com.pastor126.galeriap.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
 import com.pastor126.galeriap.entity.PerfilUsuarioEntity;
 import com.pastor126.galeriap.entity.UsuarioEntity;
@@ -24,9 +23,6 @@ public class PerfilUsuarioService {
 		return new PerfilUsuarioDTO(perfilUsuarioRepository.findById(id).get());
 	}
 	
-//	public PerfilUsuarioDTO buscarPorUsuario(UsuarioEntity usuario){
-//		return new PerfilUsuarioDTO(perfilUsuarioRepository.findById(usuario.getId()).orElseThrow(() -> new RuntimeException("Perfil não encontrado")));
-//	}
 	public PerfilUsuarioDTO buscarPorUsuario(UsuarioEntity usuario) {
 	    return new PerfilUsuarioDTO(
 	        perfilUsuarioRepository.findByUsuario(usuario)
@@ -34,7 +30,6 @@ public class PerfilUsuarioService {
 	    );
 	}
 
-	
 	public void inserir(PerfilUsuarioDTO perfilUsuario) {
 		PerfilUsuarioEntity perfilUsuarioEntity = new PerfilUsuarioEntity(perfilUsuario);
 		perfilUsuarioRepository.save(perfilUsuarioEntity);

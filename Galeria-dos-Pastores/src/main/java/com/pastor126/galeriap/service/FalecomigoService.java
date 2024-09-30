@@ -1,11 +1,8 @@
 package com.pastor126.galeriap.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.pastor126.galeriap.dto.FalecomigoDTO;
-
-
 
 @Service
 public class FalecomigoService {
@@ -20,11 +17,7 @@ public class FalecomigoService {
                           "E-mail: " + falecomigo.getEmail() + "\n" +
                           "Telefone: " + falecomigo.getTelefone() + "\n" +
                           "Mensagem: " + falecomigo.getMensagem();
-        
-        System.out.println("Mensagem: "+ mensagem);
-
         emailService.enviarEmailTexto("pastor126@gmail.com",
-                "Falecomigo da Galeria dos Pastores", 
-                mensagem);
+                "Falecomigo da Galeria dos Pastores", mensagem);
     }
 }

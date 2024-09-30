@@ -1,26 +1,29 @@
 package com.pastor126.galeriap.controller;
 
+
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.pastor126.galeriap.dto.FalecomigoDTO;
-import com.pastor126.galeriap.service.FalecomigoService;
+import com.pastor126.galeriap.dto.AtualSenDTO;
+import com.pastor126.galeriap.service.AtualSenhaService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping(value = "/falecomigo")
+@RequestMapping(value = "/atual")
 @CrossOrigin
-public class FalecomigoController {
+public class AtualSenhaController {
 	
 	@Autowired
-	private FalecomigoService falecomigoService;
+	private AtualSenhaService atualService;
 	
-	
+		
 	@PostMapping
-	public void contatoU(@RequestBody FalecomigoDTO mensagem) {
-		falecomigoService.contato(mensagem);
+	public void atualizar(@RequestBody AtualSenDTO atualsenha, HttpServletRequest request) throws IOException, RuntimeException {
+		 atualService.atualiza(atualsenha, request);
 	}
 	
 	

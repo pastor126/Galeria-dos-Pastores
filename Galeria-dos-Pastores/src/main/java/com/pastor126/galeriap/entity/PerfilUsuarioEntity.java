@@ -1,9 +1,7 @@
 package com.pastor126.galeriap.entity;
 
 import org.springframework.beans.BeanUtils;
-
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -64,7 +62,5 @@ public class PerfilUsuarioEntity {
 
 	public void setPerfil(PerfilEntity perfil) {
 		this.perfil = perfil;
-	}
-	
-	
+	}	
 }

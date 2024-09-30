@@ -1,31 +1,23 @@
 package com.pastor126.galeriap.dto;
 
 import org.springframework.beans.BeanUtils;
-
 import com.pastor126.galeriap.entity.UsuarioEntity;
 import com.pastor126.galeriap.entity.enums.SituacaoUsuario;
 
 public class UsuarioDTO {
 	
-	private Long id;
-	
-	private String nome;	
-	
-	private String login;	
-	
-	private String senha;
-		
+	private Long id;	
+	private String nome;		
+	private String login;		
+	private String senha;	
 	private String email;
-	
 	private SituacaoUsuario situacao;
-	
 	
 	public UsuarioDTO(UsuarioEntity usuario) {
 		BeanUtils.copyProperties(usuario, this);
 	}
 	
-	public UsuarioDTO() {
-		
+	public UsuarioDTO() {		
 	}
 
 	public Long getId() {

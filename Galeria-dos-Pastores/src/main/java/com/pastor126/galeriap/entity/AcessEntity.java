@@ -3,7 +3,6 @@ package com.pastor126.galeriap.entity;
 import java.util.Objects;
 
 import com.pastor126.galeriap.dto.AcessDTO;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

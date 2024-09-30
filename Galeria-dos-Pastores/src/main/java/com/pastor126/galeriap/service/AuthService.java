@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
-
 import com.pastor126.galeriap.dto.AcessDTO;
 import com.pastor126.galeriap.dto.AuthenticationDTO;
 import com.pastor126.galeriap.entity.AcessEntity;
@@ -15,7 +14,6 @@ import com.pastor126.galeriap.entity.UsuarioEntity;
 import com.pastor126.galeriap.repository.AcessRepository;
 import com.pastor126.galeriap.repository.UsuarioRepository;
 import com.pastor126.galeriap.security.jwt.JwtUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

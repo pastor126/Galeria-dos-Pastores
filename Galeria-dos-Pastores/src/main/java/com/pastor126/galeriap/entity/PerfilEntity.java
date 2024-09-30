@@ -1,18 +1,14 @@
 package com.pastor126.galeriap.entity;
 
 import java.util.Objects;
-
 import org.springframework.beans.BeanUtils;
-
 import com.pastor126.galeriap.dto.PerfilDTO;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 
 @Entity
 @Table(name = "Perfil")
@@ -65,6 +61,4 @@ public class PerfilEntity {
 		PerfilEntity other = (PerfilEntity) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-
 }

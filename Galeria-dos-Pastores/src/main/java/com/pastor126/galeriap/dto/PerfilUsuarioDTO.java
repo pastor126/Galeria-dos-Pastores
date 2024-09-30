@@ -1,7 +1,6 @@
 package com.pastor126.galeriap.dto;
 
 import org.springframework.beans.BeanUtils;
-
 import com.pastor126.galeriap.entity.PerfilUsuarioEntity;
 
 public class PerfilUsuarioDTO {
@@ -46,7 +45,6 @@ public class PerfilUsuarioDTO {
 
 	public void setPerfil(PerfilDTO perfil) {
 		this.perfil = perfil;
-	}
-	
+	}	
 
 }

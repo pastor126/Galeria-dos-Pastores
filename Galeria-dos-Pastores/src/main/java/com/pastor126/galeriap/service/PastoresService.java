@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.pastor126.galeriap.dto.PastoresDTO;
@@ -16,10 +15,7 @@ import com.pastor126.galeriap.repository.PastoresRepository;
 import com.pastor126.galeriap.repository.UsuarioRepository;
 import com.pastor126.galeriap.security.WebSecurityConfig;
 import com.pastor126.galeriap.security.jwt.JwtUtils;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-
 
 @Service
 public class PastoresService {
@@ -39,8 +35,6 @@ public class PastoresService {
 	@Autowired
     private JwtUtils jwtUtils;
 	
-	
-	
 	 public String autorizacao(HttpServletRequest request) throws IOException {
 	        // Recupera o token da requisição
 	        String token = tokenFilter.authFilterToken().getToken(request);
@@ -51,8 +45,6 @@ public class PastoresService {
 	        if (login == null) {
 	            throw new IOException("authDto não encontrado");
 	        }
-
-	        System.out.println("Login é: " + login);
 	        
 	        // Busca o usuário no banco a partir do login
 	        Optional<UsuarioEntity> usuario = usuarioRepository.findByLogin(login);
@@ -60,9 +52,7 @@ public class PastoresService {
 	        if (usuario.isEmpty()) {
 	            throw new IOException("Usuário não encontrado");
 	        }
-
 	        Long idU = usuario.get().getId();
-	        System.out.println("idU é: " + idU);
 
 	        // Busca todos os perfis de usuário e verifica se o usuário tem o perfil "administrador"
 	        String perfil = null;
@@ -71,7 +61,6 @@ public class PastoresService {
 	        for (PerfilUsuarioDTO usuarioP : lista) {
 	            if (usuarioP.getUsuario().getId().equals(idU)) {
 	                perfil = usuarioP.getPerfil().getDescricao();
-	                System.out.println("perfil é: " + perfil);
 	                break;
 	            }
 	        }
@@ -82,8 +71,7 @@ public class PastoresService {
 	
 	public List<PastoresDTO> listarTodos(HttpServletRequest request) throws IOException{
 		String perfil= autorizacao(request);
-			System.out.println("perfil é: "+ perfil);
-		
+
 		if("administrador".equals(perfil) || "parasar".equals(perfil)) {
 			 List<PastoresEntity> pastores = pastoresRepository.findAll();
 			 return pastores.stream()
@@ -102,9 +90,7 @@ public class PastoresService {
 		            .collect(Collectors.toList());
 			}	
 	}
-	
-	
-	
+		
 	
 	public PastoresDTO buscarPorId(Long id,  HttpServletRequest request) throws IOException{
 		PastoresDTO pastores = new PastoresDTO();
@@ -112,8 +98,7 @@ public class PastoresService {
 			return new PastoresDTO(pastoresRepository.findById(id).get());
 		}else {
 			return pastores;
-		}	
-		
+		}			
 	}
 	
 	
@@ -146,5 +131,4 @@ public class PastoresService {
 		}
 		}
 
-	
 }

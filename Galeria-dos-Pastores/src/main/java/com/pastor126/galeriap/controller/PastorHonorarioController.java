@@ -2,7 +2,6 @@ package com.pastor126.galeriap.controller;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,10 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.pastor126.galeriap.dto.PastoresHonorariosDTO;
 import com.pastor126.galeriap.service.PastoresHonorariosService;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 
@@ -28,7 +25,6 @@ public class PastorHonorarioController {
 	
 	@Autowired
 	private PastoresHonorariosService pastoresHonorariosService;
-
 	
 	@GetMapping
 	public List<PastoresHonorariosDTO> listarTodos(HttpServletRequest request) throws IOException{

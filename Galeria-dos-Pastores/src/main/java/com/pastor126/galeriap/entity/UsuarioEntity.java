@@ -1,13 +1,9 @@
 package com.pastor126.galeriap.entity;
 
-
 import java.util.Objects;
-
 import org.springframework.beans.BeanUtils;
-
 import com.pastor126.galeriap.dto.UsuarioDTO;
 import com.pastor126.galeriap.entity.enums.SituacaoUsuario;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -117,5 +113,4 @@ public class UsuarioEntity {
 		return Objects.equals(id, other.id);
 	}
 	
-
 }

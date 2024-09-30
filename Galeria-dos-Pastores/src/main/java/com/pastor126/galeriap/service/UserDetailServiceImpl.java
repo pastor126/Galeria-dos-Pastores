@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import com.pastor126.galeriap.repository.UsuarioRepository;
 import com.pastor126.galeriap.entity.UsuarioEntity;
 
@@ -22,14 +21,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UsuarioEntity user = userRepository.findByLogin(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-
         return UserDetailsImpl.build(user, perfilUsuarioService);
     }
 
     public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
     	UsuarioEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
-
         return UserDetailsImpl.build(user, perfilUsuarioService);
     }
 }

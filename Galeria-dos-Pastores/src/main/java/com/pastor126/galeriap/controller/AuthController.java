@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-
 import com.pastor126.galeriap.dto.AcessDTO;
 import com.pastor126.galeriap.dto.AuthenticationDTO;
 import com.pastor126.galeriap.dto.UsuarioDTO;
@@ -46,6 +44,4 @@ public class AuthController {
 		return usuarioService.verificaCadastro(uuid);
 		
 	}
-	
-
 }

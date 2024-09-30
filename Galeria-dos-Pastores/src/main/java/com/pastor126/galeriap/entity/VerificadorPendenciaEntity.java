@@ -3,7 +3,6 @@ package com.pastor126.galeriap.entity;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -84,8 +83,5 @@ public class VerificadorPendenciaEntity {
 		VerificadorPendenciaEntity other = (VerificadorPendenciaEntity) obj;
 		return Objects.equals(dataExpira, other.dataExpira) && Objects.equals(id, other.id)
 				&& Objects.equals(usuario, other.usuario) && Objects.equals(uuid, other.uuid);
-	}
-	
-	
-
+	}	
 }

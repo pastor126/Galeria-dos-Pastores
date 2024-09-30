@@ -1,16 +1,13 @@
 package com.pastor126.galeriap.service;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
 import com.pastor126.galeriap.entity.UsuarioEntity;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 
 public class UserDetailsImpl implements UserDetails {
     
@@ -20,8 +17,6 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
     
-   
-
     public UserDetailsImpl(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
@@ -33,8 +28,6 @@ public class UserDetailsImpl implements UserDetails {
         PerfilUsuarioDTO perfil = perfilUsuarioService.buscarPorUsuario(usuario);
         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + perfil.getPerfil().getDescricao().toUpperCase());
         List<GrantedAuthority> authorities = Collections.singletonList(authority);
-
-
         return new UserDetailsImpl(
             usuario.getId(),
             usuario.getLogin(),
@@ -61,8 +54,6 @@ public class UserDetailsImpl implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
-
-    // Implemente os outros métodos requeridos por UserDetails...
 
     @Override
     public boolean isAccountNonExpired() {

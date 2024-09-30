@@ -8,11 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.pastor126.galeriap.dto.AcessDTO;
 import com.pastor126.galeriap.dto.PerfilUsuarioDTO;
 import com.pastor126.galeriap.dto.UsuarioDTO;
@@ -28,7 +26,6 @@ import com.pastor126.galeriap.repository.UsuarioRepository;
 import com.pastor126.galeriap.repository.VerificadorPendenciaRepository;
 import com.pastor126.galeriap.security.WebSecurityConfig;
 import com.pastor126.galeriap.security.jwt.JwtUtils;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
@@ -77,8 +74,6 @@ public class UsuarioService{
 	        if (login == null) {
 	            throw new IOException("authDto não encontrado");
 	        }
-
-	        System.out.println("Login é: " + login);
 	        
 	        // Busca o usuário no banco a partir do login
 	        Optional<UsuarioEntity> usuario = usuarioRepository.findByLogin(login);
@@ -86,9 +81,7 @@ public class UsuarioService{
 	        if (usuario.isEmpty()) {
 	            throw new IOException("Usuário não encontrado");
 	        }
-
 	        Long idU = usuario.get().getId();
-	        System.out.println("idU é: " + idU);
 
 	        // Busca todos os perfis de usuário e verifica se o usuário tem o perfil "administrador"
 	        String perfil = null;
@@ -97,23 +90,16 @@ public class UsuarioService{
 	        for (PerfilUsuarioDTO usuarioP : lista) {
 	            if (usuarioP.getUsuario().getId().equals(idU)) {
 	                perfil = usuarioP.getPerfil().getDescricao();
-	                System.out.println("perfil é: " + perfil);
 	                break;
 	            }
 	        }
 
 	        if ("administrador".equals(perfil)) {
-	            System.out.println("perfil autorizado - adm");
 	            return "adm";
 	        }
-
-	        System.out.println("perfil não autorizado");
 	        return "Sem acesso";
 	    }
-
-
 	
-		
 	public List<UsuarioDTO> listarTodos(HttpServletRequest request) throws IOException{
 		if(autorizacao(request).equals("adm")) {
 		List<UsuarioEntity> usuarios = usuarioRepository.findAll();
@@ -170,7 +156,6 @@ public class UsuarioService{
 	        // Verifica se o usuário está presente
 	        if (optionalUsuario.isPresent()) {
 	            UsuarioEntity usuarioedit = optionalUsuario.get();
-	            System.out.println("Username linha 173: " + usuarioedit.getLogin());
 	            String nameOrigin = usuarioedit.getLogin();
 	            
 	            // Atualiza os dados do usuário
@@ -179,12 +164,10 @@ public class UsuarioService{
 	            usuarioedit.setLogin(usuario.getLogin());
 	            usuarioedit.setEmail(usuario.getEmail());
 	            usuarioedit.setSituacao(usuario.getSituacao());
-	            System.out.println("Username linha 182: " + nameOrigin);
 	            
 	            // Busca os dados de acesso relacionados ao login original
 	            AcessDTO acess = acessService.findByUsername(nameOrigin);
 	            Long idOrigin = acess.getId();
-	            System.out.println("Id linha 187: " + idOrigin);
 	            
 	            // Atualiza o nome de usuário no registro de acesso
 	            acess.setUsername(usuarioedit.getLogin());
@@ -200,13 +183,11 @@ public class UsuarioService{
 	            throw new RuntimeException("Usuário com ID " + id + " não encontrado.");
 	        }
 	    }
-	    
-	    // Caso o perfil não seja "adm", retorna um DTO vazio
+	  	    // Caso o perfil não seja "adm", retorna um DTO vazio
 	    return new UsuarioDTO();
 	}
 
-	
-	
+		
 	public void excluir(Long id, HttpServletRequest request) throws IOException {
 	    if(autorizacao(request).equals("adm")) {
 	        // Busca o usuário e verifica se está presente
@@ -222,11 +203,9 @@ public class UsuarioService{
 	            
 	            // Exclui o perfil e o acesso
 	            perfilUsuarioService.excluir(idPerfil);
-	            System.out.println("username: " + username);
 	            AcessDTO acess =acessService.findByUsername(username);
 	            System.out.println("acess id: " + acess.getId());
-	            acessService.excluir(acess.getId());
-	            
+	            acessService.excluir(acess.getId());	            
 	            // Exclui o usuário
 	            usuarioRepository.deleteById(id);
 	        } else {
@@ -252,6 +231,7 @@ public class UsuarioService{
 		return ue;
 	}
 	
+	 
 	public String verificaCadastro(String uuid) {
 		VerificadorPendenciaEntity verificaPendencia = verificadorRepository.findByUuid(UUID.fromString(uuid)).get();
 		if(verificaPendencia != null) {

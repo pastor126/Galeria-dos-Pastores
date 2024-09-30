@@ -4,18 +4,12 @@ package com.pastor126.galeriap.dto;
 
 public class FalecomigoDTO {
 	
-	private String nome;
-	
+	private String nome;	
 	private String email;
-	
 	private String telefone;
-	
 	private String mensagem;
 
-	
-	
-	public FalecomigoDTO() {
-		
+	public FalecomigoDTO() {		
 	}
 
 	public String getNome() {
@@ -48,8 +42,6 @@ public class FalecomigoDTO {
 
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;
-	}
-	
-	
+	}	
 
 }
