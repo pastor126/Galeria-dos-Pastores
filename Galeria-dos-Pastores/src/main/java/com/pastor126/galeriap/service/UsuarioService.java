@@ -240,7 +240,7 @@ public class UsuarioService{
 				uverificado.setSituacao(SituacaoUsuario.ATIVO);
 			usuarioRepository.save(uverificado);
 			verificadorRepository.delete(verificaPendencia);
-			return "<a className=\" text-5xl font-medium text-white hover:bg-red-400 focus-visible:outline-offset-2 focus-visible:outline-red-900   border-2 rounded-md  border-black ml-10 bg-red-500 mt-20 ml-20 pl-4 pr-4 flex items-center w-20\" href='https://pastor-frontend-production.up.railway.app'>Vá para o Login</a>";
+			return "<h1>Abra o APP e faça o Login</h1>";
 			}
 		}else {
 			verificadorRepository.delete(verificaPendencia);
