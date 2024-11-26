@@ -32,7 +32,7 @@ public class PastorController {
 	}
 	
 	@GetMapping("/{id}")
-	public PastoresDTO buscarId(@PathVariable("id") Long id, HttpServletRequest request) throws IOException{
+	public PastoresDTO buscarId(@PathVariable Long id, HttpServletRequest request) throws IOException{
 	return pastoresService.buscarPorId(id, request);
 	}
 	
@@ -48,7 +48,7 @@ public class PastorController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id, HttpServletRequest request) throws IOException{
+	public ResponseEntity<Void> excluir(@PathVariable Long id, HttpServletRequest request) throws IOException{
 		pastoresService.excluir(id, request);
 		return ResponseEntity.ok().build();
 	}

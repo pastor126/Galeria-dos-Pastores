@@ -40,7 +40,7 @@ public class PerfilUsuarioController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) {
+	public ResponseEntity<Void> excluir(@PathVariable Long id) {
 		perfilUsuarioService.excluir(id);
 		return ResponseEntity.ok().build();
 	}

@@ -25,7 +25,6 @@ public class AcessDTO {
 
 	public AcessDTO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 

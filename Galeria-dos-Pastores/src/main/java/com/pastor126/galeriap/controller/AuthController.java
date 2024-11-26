@@ -40,7 +40,7 @@ public class AuthController {
 	}
 	
 	@GetMapping(value = "/verificaCadastro/{uuid}")
-	public String verificaCadastro(@PathVariable("uuid") String uuid) {
+	public String verificaCadastro(@PathVariable String uuid) {
 		return usuarioService.verificaCadastro(uuid);
 		
 	}

@@ -42,7 +42,7 @@ public class AdmController {
     }
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> excluir(@PathVariable("id") Long id, HttpServletRequest request) throws IOException{
+	public ResponseEntity<Void> excluir(@PathVariable Long id, HttpServletRequest request) throws IOException{
 		
 		usuarioService.excluir(id, request);	
 		return ResponseEntity.ok().build();

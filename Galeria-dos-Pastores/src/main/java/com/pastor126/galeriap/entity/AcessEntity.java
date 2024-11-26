@@ -34,7 +34,6 @@ public class AcessEntity {
 
 	public AcessEntity() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 
