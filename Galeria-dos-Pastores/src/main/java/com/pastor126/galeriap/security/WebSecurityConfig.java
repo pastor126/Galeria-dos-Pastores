@@ -66,7 +66,7 @@ public class WebSecurityConfig {
         config.addAllowedOrigin("https://pastor.up.railway.app");
         config.addAllowedOrigin("android-app://com.eduardopacheco.galeriaflutter2"); //para app
         config.addAllowedOrigin("http://localhost");
-        config.addAllowedOrigin("file://");
+        config.addAllowedOrigin("*");
         config.addAllowedHeader("*"); //Permite todos os cabeçalhos.
         config.addAllowedMethod("*"); //Permite todos os métodos HTTP.
         source.registerCorsConfiguration("/**", config); //Registra a configuração de CORS para todas as rotas (/**).
