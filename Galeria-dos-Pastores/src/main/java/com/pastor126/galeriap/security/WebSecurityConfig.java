@@ -63,7 +63,7 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://pastor.up.railway.app");
+        config.addAllowedOrigin("https://galeria-dos-pastores-production.up.railway.app");
         config.addAllowedOrigin("android-app://com.eduardopacheco.galeriaflutter2"); //para app
         config.addAllowedOrigin("http://localhost");
         config.addAllowedOrigin("*");
