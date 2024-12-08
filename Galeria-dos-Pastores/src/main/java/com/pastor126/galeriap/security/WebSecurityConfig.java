@@ -51,6 +51,7 @@ public class WebSecurityConfig {
             	.requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/usuario/**").permitAll()
                 .requestMatchers("/falecomigo/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated());
         
         http.addFilterBefore(authFilterToken(), UsernamePasswordAuthenticationFilter.class);
@@ -65,9 +66,9 @@ public class WebSecurityConfig {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("https://galeria-dos-pastores-production.up.railway.app");
         config.addAllowedOrigin("android-app://com.eduardopacheco.galeriaflutter2"); //para app
+        config.addAllowedOrigin("https://pastor.up.railway.app");
         config.addAllowedOrigin("http://localhost");
-        config.addAllowedOrigin("*");
-        config.addAllowedOriginPattern("*");
+        
         config.addAllowedHeader("*"); //Permite todos os cabeçalhos.
         config.addAllowedMethod("*"); //Permite todos os métodos HTTP.
         source.registerCorsConfiguration("/**", config); //Registra a configuração de CORS para todas as rotas (/**).
