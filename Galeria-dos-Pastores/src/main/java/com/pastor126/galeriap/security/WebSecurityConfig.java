@@ -67,6 +67,7 @@ public class WebSecurityConfig {
         config.addAllowedOrigin("android-app://com.eduardopacheco.galeriaflutter2"); //para app
         config.addAllowedOrigin("http://localhost");
         config.addAllowedOrigin("*");
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*"); //Permite todos os cabeçalhos.
         config.addAllowedMethod("*"); //Permite todos os métodos HTTP.
         source.registerCorsConfiguration("/**", config); //Registra a configuração de CORS para todas as rotas (/**).
